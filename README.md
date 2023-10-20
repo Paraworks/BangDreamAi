@@ -1,5 +1,5 @@
-# 新概念AIvtuber
-部署效果: [千早ai音](love.soyorin.top)
+# 新概念AIvtuber 
+## 效果预览:[千早ai音](love.soyorin.top)
 将[这个链接](https://gitee.com/liu_soon/live2d-pixi/tree/master/src/library)下的所有文件搬运到 live2d/src/library 下
 阅读并修改 live2d/src/components/index.js的代码
 ```
