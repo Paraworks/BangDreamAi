@@ -11,18 +11,19 @@ npm run build
 cd dist
 http-server
 ```
-chatbot示例:复读机:
-```
-cd ..
-python launcher.py
-```
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
 ```
 git clone https://huggingface.co/spaces/Mahiruoshi/BangDream-Bert-VITS2
 cd BangDream-Bert-VITS2
 pip install -r requirements.txt
+pip install Flask-CORS
 #将app.py替换成TTS-example.py的内容
 python app.py
+```
+chatbot示例:复读机:
+```
+cd ..
+python launcher.py
 ```
 前端
 ```
