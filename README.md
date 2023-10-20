@@ -6,9 +6,9 @@
 cd live2d
 npm install
 npm run dev
-#其实本地的话不run build也行，进入templates/chat.html 将127.0.0.1:8080替换为测试用的端口
 npm run build
 cd dist
+#把live2d/src文件夹也拖到dist里面
 http-server
 ```
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
