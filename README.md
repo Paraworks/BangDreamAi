@@ -1,10 +1,12 @@
+# 新概念AIvtuber
+部署效果: [千早ai音](love.soyorin.top)
 将[这个链接](https://gitee.com/liu_soon/live2d-pixi/tree/master/src/library)下的所有文件搬运到 live2d/src/library 下
 阅读并修改 live2d/src/components/index.js的代码
 ```
 cd live2d
 npm install
 npm run dev
-#如果你希望服务器部署
+#其实本地的话不run build也行，进入templates/chat.html 将127.0.0.1:8080替换为测试用的端口
 npm run build
 cd dist
 http-server
