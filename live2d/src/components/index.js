@@ -107,7 +107,7 @@ if (text === previousText) {
     model.idleMotionPriority = "TapHead";
     setTimeout(() => {
         loadAndPlayAudio(audioCtx, analyser, model);
-    }, 2000);
+    }, 2000);//默认等待时间2s，可自行缩短提高响应速度
     return;
 }
 
@@ -138,7 +138,7 @@ previousText = text;
           let playing = true;
           const o = 80;
           const arrayAdd = a => a.reduce((i, a) => i + a, 0);
-
+          //响度设置，自行调整参数。
           const run = () => {
               if (!playing) return;
               const frequencyData = getByteFrequencyData(analyser, new Uint8Array(analyser.frequencyBinCount));
