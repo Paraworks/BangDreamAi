@@ -38,7 +38,8 @@ async function startApp() {
 
     model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
     app.stage.addChild(model);
-    model.scale.set(0.3);
+    # 设置模型大小
+    model.scale.set(0.2);
     model.x = 0;
 
     const a = new InternalModel(model);
