@@ -48,19 +48,14 @@ def gpt3_chat(text):
 
 @room.on('DANMU_MSG')
 async def on_danmaku(event):
-    # 收到弹幕
     msg = event["data"]["info"][1]
-    
-    # 删除弹幕中的特殊符号
     msg_cleaned = re.sub(r'\[.*?\]', '', msg)
     
     print("记录:" + msg_cleaned)
 
-    # 检查弹幕长度
-    if len(msg_cleaned) <= 3:
-        return
 
-    # 检查弹幕是否包含英文或阿拉伯数字
+    # 检查弹幕长度if len(msg_cleaned) <= 3:
+    #    return
     if re.search(r'[a-zA-Z0-9]', msg_cleaned):
         return
 
@@ -92,7 +87,7 @@ def process_messages():
                     f.truncate()
                     last_processed_msg = response
                 else:
-                    print("没有新弹幕，忽视...")
+                    print("没有新弹幕")
         time.sleep(5)
 
 threading.Thread(target=process_messages, daemon=True).start()
