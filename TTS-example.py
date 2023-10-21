@@ -162,12 +162,13 @@ def tts_fn(
                 language= "JP" if is_japanese(text) else "ZH",
             )
         audio_fin.append(audio)
-    write("books/temp.wav", 44100, np.concatenate(audio_fin))
+    write("temp.wav", 44100, np.concatenate(audio_fin))
     return "success"
 
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/tts')
 @app.route('/tts')
 def tts_api():
     # 从请求中获取参数
@@ -177,15 +178,24 @@ def tts_api():
     noise_scale = float(request.args.get('noise_scale', 0.6))
     noise_scale_w = float(request.args.get('noise_scale_w', 0.8))
     length_scale = float(request.args.get('length_scale', 1))
-    
-    status = tts_fn(text, speaker='愛音', sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, length_scale=1)
-    with open('books/temp.wav','rb') as bit:
-        wav_bytes = bit.read()
-    
-    headers = {
-            'Content-Type': 'audio/wav',
-            'Text': status.encode('utf-8')}
-    return wav_bytes, 200, headers
+    try:
+        status = tts_fn(text, speaker='彩', sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, length_scale=1)
+        with open('temp.wav','rb') as bit:
+            wav_bytes = bit.read()
+        
+        headers = {
+                'Content-Type': 'audio/wav',
+                'Text': status.encode('utf-8')}
+        return wav_bytes, 200, headers
+    #若生成音频失败直接读取上一次的
+    except:
+        with open('temp.wav','rb') as bit:
+            wav_bytes = bit.read()
+        
+        headers = {
+                'Content-Type': 'audio/wav',
+                'Text': 'failed'}
+        return wav_bytes, 200, headers
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
