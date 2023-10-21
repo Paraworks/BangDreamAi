@@ -11,12 +11,12 @@ let previousText = '';
 
 export async function init() {
     const startButton = document.getElementById('startButton');
-
+    //startButton.style.display = 'none';
     startButton.addEventListener('click', async () => {
         // 点击按钮开始应用程序，否则浏览器会拒绝加载
         await startApp();
 
-        // 如果你不想再次点击该按钮，可以选择隐藏或禁用它
+        // 你也可以将startButton.addEventListener方法整体注释掉用以直播(obs链接桌面声音)，取消第14行的注释
         startButton.style.display = 'none';
     });
 }
@@ -50,7 +50,7 @@ async function startApp() {
     });
 
     draggable(model);
-    addFrame(model);
+    //addFrame(model); 显示模型区域方便开发的时候看见模型的区域
 
     console.log(model);
 
