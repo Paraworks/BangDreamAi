@@ -38,7 +38,8 @@ python launcher.py
 ```
 python app.py
 ```
-默认部署在http://127.0.0.1:5001上,预览效果
+默认部署在http://127.0.0.1:5001
+预览效果
 [千早爱音(日语复读姬)](http://love.soyorin.top/)
 ## 直播间设置
 部署弹幕监听和chatbot
