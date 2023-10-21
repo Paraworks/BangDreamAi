@@ -73,8 +73,8 @@ async def on_gift(event):
         uname = event['data']['data']['receive_user_info']['uname']
         thank_msg = f"感谢{uname}的舰长"
         print("记录:"+thank_msg)
-        with open(FILE_PATH, 'w', encoding='utf-8') as f:
-           f.write(thank_msg + "\n")
+        #with open(FILE_PATH, 'w', encoding='utf-8') as f:
+        #   f.write(thank_msg + "\n")
 
 def process_messages():
     last_processed_msg = None
