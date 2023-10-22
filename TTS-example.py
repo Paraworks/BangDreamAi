@@ -171,13 +171,14 @@ CORS(app)
 @app.route('/tts')
 @app.route('/tts')
 def tts_api():
-    # 从请求中获取参数
+    # 这些没必要改
     text = request.args.get('text')
     speaker = request.args.get('speaker')
     sdp_ratio = float(request.args.get('sdp_ratio', 0.2))
     noise_scale = float(request.args.get('noise_scale', 0.6))
     noise_scale_w = float(request.args.get('noise_scale_w', 0.8))
     length_scale = float(request.args.get('length_scale', 1))
+    # 修改说话人
     try:
         status = tts_fn(text, speaker='彩', sdp_ratio=0.2, noise_scale=0.6, noise_scale_w=0.8, length_scale=1)
         with open('temp.wav','rb') as bit:
