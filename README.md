@@ -21,7 +21,7 @@ cd BangDream-Bert-VITS2
 pip install -r requirements.txt
 pip install Flask
 pip install Flask-CORS
-#将app.py替换成TTS-example.py的内容
+#将app.py替换成TTS-example.py的内容，记得修改说话人，默认是丸山彩
 python app.py
 ```
 基础启动示例:复读机:
