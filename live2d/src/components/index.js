@@ -114,8 +114,7 @@ if (text === previousText) {
 
 previousText = text;  
   const request = new XMLHttpRequest();
-    //设置说话人
-  request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}&speaker=ましろ`, true);
+  request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
   request.onload = () => {
       audioCtx.decodeAudioData(request.response, (buffer) => {
