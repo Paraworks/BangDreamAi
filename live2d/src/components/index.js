@@ -95,7 +95,7 @@ const getByteFrequencyData = (analyser, frequencyData) => {
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
   try {
-    const response = await fetch('http://soyorin.top:5180/show');
+    const response = await fetch('http://127.0.0.1:5180/show');
     text = await response.text();
 } catch (error) {
     text = 'つくし'
@@ -114,7 +114,7 @@ if (text === previousText) {
 previousText = text;  // 更新上次读取的文本内容
 
   const request = new XMLHttpRequest();
-  request.open('GET', `http://soyorin.top/tts?text=${encodeURIComponent(text)}`, true);
+  request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
   request.onload = () => {
       audioCtx.decodeAudioData(request.response, (buffer) => {
