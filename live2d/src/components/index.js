@@ -32,11 +32,10 @@ async function startApp() {
         autoDensity: true,
         autoResize: true,
         antialias: true,
-        height: '3160',
-        width: '3800',
+        height: '1080',
+        width: '1900',
     });
 
-    model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
     app.stage.addChild(model);
     model.scale.set(0.3);
     model.x = 0;
@@ -96,9 +95,10 @@ const getByteFrequencyData = (analyser, frequencyData) => {
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
   try {
-    const response = await fetch('http://127.0.0.1:5180/show');
+    const response = await fetch('http://soyorin.top:5180/show');
     text = await response.text();
 } catch (error) {
+    text = 'つくし'
     console.error('Failed to get text from the server', error);
     return;
 }
@@ -114,7 +114,7 @@ if (text === previousText) {
 previousText = text;  // 更新上次读取的文本内容
 
   const request = new XMLHttpRequest();
-  request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}`, true);
+  request.open('GET', `http://soyorin.top/tts?text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
   request.onload = () => {
       audioCtx.decodeAudioData(request.response, (buffer) => {
