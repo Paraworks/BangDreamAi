@@ -11,16 +11,17 @@ let previousText = '';
 
 export async function init() {
     const startButton = document.getElementById('startButton');
-
+    await startApp();
+    startButton.style.display = 'none';
     startButton.addEventListener('click', async () => {
-        // 开始应用程序
-        await startApp();
+         点击按钮开始应用程序，否则浏览器会拒绝加载
+       // await startApp();
 
         // 如果你不想再次点击该按钮，可以选择隐藏或禁用它
         startButton.style.display = 'none';
     });
 }
-
+//从bestdori或者其他途径获取live2d，配置好后放入src/assets下，修改第25行并加载你自己的模型，如是model3详见133行
 async function startApp() {
     const model = await Live2DModel.from('../../src/assets/anon/anon.model.json', {
         motionPreload: MotionPreloadStrategy.NONE,
@@ -32,12 +33,13 @@ async function startApp() {
         autoDensity: true,
         autoResize: true,
         antialias: true,
-        height: '1080',
-        width: '1900',
+        height: '3160',
+        width: '3800',
     });
 
+    model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
     app.stage.addChild(model);
-    model.scale.set(0.3);
+    model.scale.set(0.2);
     model.x = 0;
 
     const a = new InternalModel(model);
@@ -49,7 +51,7 @@ async function startApp() {
     });
 
     draggable(model);
-    addFrame(model);
+    //addFrame(model);
 
     console.log(model);
 
@@ -94,25 +96,24 @@ const getByteFrequencyData = (analyser, frequencyData) => {
 
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
-  try {
+  try {//从launcher.py启动的flask服务中获取待读文本
     const response = await fetch('http://127.0.0.1:5180/show');
     text = await response.text();
 } catch (error) {
-    text = 'つくし'
     console.error('Failed to get text from the server', error);
     return;
 }
 
 if (text === previousText) {
-    model.idleMotionPriority = "TapHead";
+    model.idleMotionPriority = "wait";
     setTimeout(() => {
         loadAndPlayAudio(audioCtx, analyser, model);
-    }, 2000);
+    }, 100);
     return;
 }
 
-previousText = text;  // 更新上次读取的文本内容
-
+previousText = text;  
+  //将文本发送至tts服务
   const request = new XMLHttpRequest();
   request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
@@ -130,6 +131,8 @@ previousText = text;  // 更新上次读取的文本内容
 
           const setMouthOpenY = v => {
               v = Math.max(0, Math.min(1, v));
+              //如果使用三代live2d模型
+              //model.internalModel.coreModel.setParameterValueById('ParamMouthOpenY',v);
               model.internalModel.coreModel.setParamFloat('PARAM_MOUTH_OPEN_Y', v);
           };
 
