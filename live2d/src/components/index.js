@@ -15,7 +15,7 @@ export async function init() {
     startButton.style.display = 'none';
     startButton.addEventListener('click', async () => {
          点击按钮开始应用程序，否则浏览器会拒绝加载
-       // await startApp();
+        await startApp();
 
         // 如果你不想再次点击该按钮，可以选择隐藏或禁用它
         startButton.style.display = 'none';
