@@ -32,8 +32,8 @@ async function startApp() {
         autoDensity: true,
         autoResize: true,
         antialias: true,
-        height: '1080',
-        width: '1900',
+        height: '6320',
+        width: '7600',
     });
 
     model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
