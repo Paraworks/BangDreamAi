@@ -11,16 +11,16 @@ let previousText = '';
 
 export async function init() {
     const startButton = document.getElementById('startButton');
-    //startButton.style.display = 'none';
+
     startButton.addEventListener('click', async () => {
-        // 点击按钮开始应用程序，否则浏览器会拒绝加载
+        // 开始应用程序
         await startApp();
 
-        // 你也可以将startButton.addEventListener方法整体注释掉用以直播(obs链接桌面声音)，取消第14行的注释
+        // 如果你不想再次点击该按钮，可以选择隐藏或禁用它
         startButton.style.display = 'none';
     });
 }
-//从bestdori或者其他途径获取live2d，配置好后放入src/assets下，修改第25行并加载你自己的模型，如是model3详见133行
+
 async function startApp() {
     const model = await Live2DModel.from('../../src/assets/anon/anon.model.json', {
         motionPreload: MotionPreloadStrategy.NONE,
@@ -32,14 +32,13 @@ async function startApp() {
         autoDensity: true,
         autoResize: true,
         antialias: true,
-        height: '6320',
-        width: '7600',
+        height: '3160',
+        width: '3800',
     });
 
     model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
     app.stage.addChild(model);
-    # 设置模型大小
-    model.scale.set(0.2);
+    model.scale.set(0.3);
     model.x = 0;
 
     const a = new InternalModel(model);
@@ -51,7 +50,7 @@ async function startApp() {
     });
 
     draggable(model);
-    //addFrame(model); 显示模型区域方便开发的时候看见模型的区域
+    addFrame(model);
 
     console.log(model);
 
@@ -96,7 +95,7 @@ const getByteFrequencyData = (analyser, frequencyData) => {
 
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
-  try {//从launcher.py启动的flask服务中获取待读文本
+  try {
     const response = await fetch('http://127.0.0.1:5180/show');
     text = await response.text();
 } catch (error) {
@@ -108,11 +107,12 @@ if (text === previousText) {
     model.idleMotionPriority = "TapHead";
     setTimeout(() => {
         loadAndPlayAudio(audioCtx, analyser, model);
-    }, 2000);//默认等待时间2s，可自行缩短提高响应速度
+    }, 2000);
     return;
 }
 
-previousText = text;  
+previousText = text;  // 更新上次读取的文本内容
+
   const request = new XMLHttpRequest();
   request.open('GET', `http://127.0.0.1:5000/tts?text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
@@ -130,15 +130,13 @@ previousText = text;
 
           const setMouthOpenY = v => {
               v = Math.max(0, Math.min(1, v));
-              //如果使用三代live2d模型
-              //model.internalModel.coreModel.setParameterValueById('ParamMouthOpenY',v);
               model.internalModel.coreModel.setParamFloat('PARAM_MOUTH_OPEN_Y', v);
           };
 
           let playing = true;
           const o = 80;
           const arrayAdd = a => a.reduce((i, a) => i + a, 0);
-          //响度设置，自行调整参数。
+
           const run = () => {
               if (!playing) return;
               const frequencyData = getByteFrequencyData(analyser, new Uint8Array(analyser.frequencyBinCount));
