@@ -1,0 +1,24 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anon Love</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='drag.js') }}"></script>
+</head>
+<body>
+
+<iframe class="background-frame" src="http://localhost:5173/"></iframe>
+
+<div class="draggable chat-box">
+    <div class="chat-header">历史记录</div>
+    <div class="chat-messages"></div>
+    <textarea class="chat-input" placeholder="回车输入" onkeydown="checkEnter(event)"></textarea>
+</div>
+
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+
+</body>
+</html>
