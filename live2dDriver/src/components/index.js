@@ -20,7 +20,6 @@ export async function init() {
     }
 }
 
-
 async function startApp() {
     const model = await Live2DModel.from(config.modelPath, {
         motionPreload: MotionPreloadStrategy.NONE,
@@ -114,7 +113,7 @@ if (text === previousText) {
 previousText = text;  
   //将文本发送至tts服务
   const request = new XMLHttpRequest();
-  request.open('GET', `${config.ttsApiBaseUrl}?text=${encodeURIComponent(text)}`, true);
+  request.open('GET', `${config.ttsApiBaseUrl}text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
   request.onload = () => {
       audioCtx.decodeAudioData(request.response, (buffer) => {
@@ -146,7 +145,7 @@ previousText = text;
               for (let i = 0; i < 1000; i += o) {
                   arr.push(frequencyData[i]);
               }
-              setMouthOpenY((arrayAdd(arr) / arr.length - 20) / 60);
+              setMouthOpenY((arrayAdd(arr)*config.volum / arr.length - config.openV) / 60);
               setTimeout(run, 1000 / 30);
           };
           run();

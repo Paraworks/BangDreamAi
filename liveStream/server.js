@@ -16,17 +16,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('frontend'));
 
+let latestReply = "";
+
 // 聊天消息路由
 app.post('/sendMessage', (req, res) => {
     const message = req.body.message;
     chatbotAPI.getChatbotResponse(message)
         .then(response => {
+            latestReply = response; // 更新最新的回复
             res.json({ reply: response });
         })
         .catch(error => {
             res.status(500).send(error.message);
         });
 });
+
 
 // 更新配置路由
 app.post('/updateConfig', (req, res) => {
@@ -50,6 +54,11 @@ app.get('/getConfig', (req, res) => {
             res.send(data);
         }
     });
+});
+
+// 展示最新回复
+app.get('/show', (req, res) => {
+    res.send(latestReply);
 });
 
 

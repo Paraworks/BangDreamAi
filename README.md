@@ -1,29 +1,42 @@
 # 完全网页端部署的轻量化AIvtuber 
-## 网页端部署
+## live2d驱动部署
 ```
 #编译部署
 cd live2dDriver
 npm install
 # 本机测试
 npm run dev
-# 服务器部署(可以跳过)
+#编译部署(可以跳过)
 npm run build
 cd dist
 #把live2dDriver/src文件夹拖到dist里面
 http-server
 ```
+## 切换为自定义模型
+见[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)
+## 前端框架启动(可在页面内更改模型配置)
+```
+cd liveStream
+npm install 
+node server.js
+#编译部署
+#还没试
+```
 ## 启动TTS合成
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
 ```
-git clone https://huggingface.co/spaces/Mahiruoshi/BangDream-Bert-VITS2
-cd BangDream-Bert-VITS2
+git clone https://huggingface.co/spaces/Mahiruoshi/MyGO_VIts-bert
+cd MyGO_VIts-bert
 pip install -r requirements.txt
 pip install Flask
 pip install Flask-CORS
 #把server.py替代为这个仓库的
 python server.py
 ```
-## 前端网页部署
+## 添加chatbot
+自行修改[chatbotAPI.js](https://github.com/Paraworks/BangDreamAi/blob/main/liveStream/chatbotAPI.js)
+
+# 直播间部署(待更新)
 ```
 python launcher.py
 ```
@@ -33,13 +46,6 @@ python launcher.py
 pip install openai
 python launcher.py
 ```
-前端
-```
-python app.py
-```
-默认部署在http://127.0.0.1:5001
-预览效果
-[千早爱音(日语复读姬)](http://love.soyorin.top/)
 ## 直播间设置
 部署弹幕监听和chatbot
 阅读并且修改[chatgpt.py](https://github.com/Paraworks/BangDreamAi/blob/main/chatgpt.py)的配置
