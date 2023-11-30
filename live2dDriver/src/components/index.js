@@ -19,7 +19,8 @@ export async function init() {
         console.error('Failed to load config:', error);
     }
 }
-//从bestdori或者其他途径获取live2d，配置好后放入src/assets下，修改第25行并加载你自己的模型，如是model3详见133行
+
+
 async function startApp() {
     const model = await Live2DModel.from(config.modelPath, {
         motionPreload: MotionPreloadStrategy.NONE,
@@ -94,7 +95,7 @@ const getByteFrequencyData = (analyser, frequencyData) => {
 
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
-  try {//从launcher.py启动的flask服务中获取待读文本
+  try {//获取待读文本
     const response = await fetch(config.textApiBaseUrl);
     text = await response.text();
 } catch (error) {

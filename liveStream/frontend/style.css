@@ -1,26 +1,112 @@
-body {
+body, html {
+    height: 100%;
+    margin: 0;
     font-family: Arial, sans-serif;
+/*    overflow: hidden;*/
+    background-color: rgba(255, 182, 193, 0.3);
 }
 
-#container {
-    width: 800px;
-    margin: 20px auto;
-}
-
-#chat-container, #config-container {
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    padding: 10px;
-}
-
-#chat-box {
-    height: 300px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-#config-input {
+.live2d-frame {
     width: 100%;
-    height: 150px;
+    height: 100%;
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* 添加拖拽样式 */
+.draggable {
+    position: absolute;
+    cursor: move;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 182, 193, 0.5);
+    border: 2px solid #FFB6C1;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+/*    overflow: hidden;*/
+}
+
+/* 聊天框样式 */
+.chat-box {
+    width: 12.5%;
+    height: 75%;
+    left: 0;
+    top: 12.5%;
+}
+
+.chat-header, .config-header {
+    background-color: #FFB6C1;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: bold;
+}
+
+.chat-messages {
+    background-color: rgba(255, 192, 203, 0.85);
+    flex-grow: 1;
+    padding: 10px;
+/*    overflow-y: hidden;*/
+    word-wrap: break-word;
+}
+
+.chat-input {
+    border: 1px solid rgba(255, 160, 135, 0.7);
+    height: 4.66%;
+    resize: none;
+    background-color: rgba(255, 180, 193, 0.85);
+}
+
+/* 配置框样式 */
+.config-box {
+    width: 20%;
+    height: 50%;
+    left: 0;
+    bottom: 12.5%;
+}
+
+/* 配置输入样式 */
+.config-input {
+    width: 80%;
+    height: 80%;
+    background-color: rgba(255, 192, 203, 0.85);
+    flex-grow: 1;
+    padding: 10px;
+/*    overflow-y: hidden;*/
+    word-wrap: break-word;
+}
+
+/* 发送按钮样式 */
+.send-button {
+    padding: 8px 12px;
+    background-color: #FF69B4;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.send-button:hover {
+    background-color: #FF4491;
+}
+
+/* 配置开关按钮样式 */
+.config-toggle {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    padding: 8px 12px;
+    background-color: #FF69B4;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.config-toggle:hover {
+    background-color: #FF4491;
 }

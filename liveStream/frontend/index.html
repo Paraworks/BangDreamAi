@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <title>bangdreamai 直播</title>
     <link rel="stylesheet" href="style.css">
+    <script src="drag.js"></script>
 </head>
 <body>
-    <div id="container">
-        <div id="chat-container">
-            <div id="chat-box"></div>
-            <input type="text" id="chat-input">
-            <button onclick="sendMessage()">发送</button>
-        </div>
-        <div id="config-container">
-            <textarea id="config-input"></textarea>
-            <button onclick="updateConfig()">更新配置</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+
+<iframe class="live2d-frame" id="live2d-frame" src=""></iframe>
+
+
+<div class="draggable chat-box" id="chat-container">
+    <div class="chat-header">聊天记录</div>
+    <div class="chat-messages" id="chat-box"></div>
+    <input type="text" class="chat-input" id="chat-input" placeholder="输入消息">
+    <button class="send-button" onclick="sendMessage()">发送</button>
+</div>
+
+<div class="draggable config-box" id="config-container" style="display: none;">
+    <div class="config-header">配置设置</div>
+    <textarea class="config-input" id="config-input"></textarea>
+    <button class="send-button" onclick="updateConfig()">更新配置</button>
+</div>
+
+<button class="config-toggle" onclick="toggleConfig()">配置</button>
+
+<script src="script.js"></script>
+
 </body>
 </html>

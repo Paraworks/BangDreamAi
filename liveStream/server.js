@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const chatbotAPI = require('./chatbotAPI');
 const fs = require('fs');
-const configPath = 'E:/WorkSpace/Upload/BangDreamAi/live2dDriver/config.json';
+const configPath = '../live2dDriver/config.json';
 
 const app = express();
 const port = 3000;
@@ -15,8 +15,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('frontend'));
-console.log('Serving static files from ../frontend');
-
 
 // 聊天消息路由
 app.post('/sendMessage', (req, res) => {

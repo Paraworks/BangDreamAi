@@ -1,5 +1,0 @@
-{
-  "modelPath": "../Resources/mzl/mzl.model.json",
-  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts",
-  "textApiBaseUrl": "http://127.0.0.1:5180/show"
-}

@@ -1,3 +1,4 @@
+//script.js
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value;
@@ -56,10 +57,20 @@ function updateConfig() {
         body: JSON.stringify(config)
     })
     .then(response => response.text())
-    .then(message => alert(message))
+    .then(message => {
+        alert(message);
+        // 重新加载 live2d-frame
+        const live2dFrame = document.getElementById('live2d-frame');
+        live2dFrame.src = "http://localhost:5173/";
+    })
     .catch(error => console.error('配置更新失败:', error));
 }
 
+
+function toggleConfig() {
+    const configContainer = document.getElementById('config-container');
+    configContainer.style.display = configContainer.style.display === 'none' ? 'block' : 'none';
+}
 
 function getConfig() {
     fetch('/getConfig')

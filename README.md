@@ -1,19 +1,18 @@
 # 完全网页端部署的轻量化AIvtuber 
 ## 网页端部署
-将[这个链接](https://gitee.com/liu_soon/live2d-pixi/tree/master/src/library)下的所有文件搬运到 live2d/src/library 下
-阅读并修改 [live2d/src/components/index.js](https://github.com/Paraworks/BangDreamAi/blob/main/live2d/src/components/index.js)的代码
 ```
-#编译
-cd live2d
+#编译部署
+cd live2dDriver
 npm install
 # 本机测试
 npm run dev
-# 服务器部署，如果直播间部署可以跳过
+# 服务器部署(可以跳过)
 npm run build
 cd dist
-#把live2d/src文件夹拖到dist里面
+#把live2dDriver/src文件夹拖到dist里面
 http-server
 ```
+## 启动TTS合成
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
 ```
 git clone https://huggingface.co/spaces/Mahiruoshi/BangDream-Bert-VITS2
@@ -21,10 +20,10 @@ cd BangDream-Bert-VITS2
 pip install -r requirements.txt
 pip install Flask
 pip install Flask-CORS
-#将app.py替换成TTS-example.py的内容，记得修改说话人，默认是丸山彩
-python app.py
+#把server.py替代为这个仓库的
+python server.py
 ```
-基础启动示例:复读机:
+## 前端网页部署
 ```
 python launcher.py
 ```
