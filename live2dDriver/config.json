@@ -1,5 +1,5 @@
 {
-  "modelPath": "../Resources/mzl/mzl.model.json",
+  "modelPath": "../Resources/mzl/mzl.model3.json",
   "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=蘭&",
   "textApiBaseUrl": "http://127.0.0.1:3000/show",
   "volum": 0.4,

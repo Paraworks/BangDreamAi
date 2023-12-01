@@ -6,20 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "serve": "vue-cli-service serve"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "pixi-live2d-display": "^0.4.0",
     "pixi.js": "^6.4.2",
     "require": "^2.4.20",
-    "socket.io": "^4.7.2",
     "vue": "^3.2.47"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
-    "@vue/cli-service": "^5.0.8",
     "vite": "^4.3.9"
   }
 }

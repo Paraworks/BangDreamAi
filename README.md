@@ -12,8 +12,13 @@ cd dist
 #把live2dDriver/src文件夹拖到dist里面
 http-server
 ```
-## 切换为自定义模型
+## 自定义配置
 见[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)
+## live2d模型
+BangDream的live2d可以直接从bestdori手动下载。Github上也有许多提取好的仓库
+### [五团(卡面比较多)](https://github.com/seia-soto/BanG-Dream-Live2D)
+### [七团](https://github.com/Eikanya/Live2d-model/tree/master/BanG%20Dream!)
+### 你需要将这些模型放在[live2dDriver/Resources](https://github.com/Paraworks/BangDreamAi/tree/main/live2dDriver/Resources)下，并且在启动网页界面或者修改[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)文件来加载
 ## 前端框架启动(可在页面内更改模型配置)
 ```
 cd liveStream
