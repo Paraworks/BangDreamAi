@@ -1,11 +1,11 @@
 <script setup>
 import { init } from './components/index'
-import { draw } from './components/tip'
+//import { draw } from './components/tip'
 import {onMounted} from 'vue'
 
 onMounted(() => {
   init()
-  draw()
+  //draw()
 })
 </script>
   
