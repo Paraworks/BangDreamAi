@@ -1,5 +1,4 @@
 // server.js
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -16,7 +15,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('frontend'));
 
-let latestReply = "";
+let latestReply = {
+    text: "",
+    model: "default",
+    expression: "default"
+};
 
 // 聊天消息路由
 app.post('/sendMessage', (req, res) => {
@@ -24,13 +27,12 @@ app.post('/sendMessage', (req, res) => {
     chatbotAPI.getChatbotResponse(message)
         .then(response => {
             latestReply = response; // 更新最新的回复
-            res.json({ reply: response });
+            res.json(response);
         })
         .catch(error => {
             res.status(500).send(error.message);
         });
 });
-
 
 // 更新配置路由
 app.post('/updateConfig', (req, res) => {
@@ -58,7 +60,7 @@ app.get('/getConfig', (req, res) => {
 
 // 展示最新回复
 app.get('/show', (req, res) => {
-    res.send(latestReply);
+    res.json(latestReply);
 });
 
 

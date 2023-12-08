@@ -1,4 +1,6 @@
 //script.js
+const live2dUrlPath = "http://localhost:5173/";
+
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value;
@@ -22,9 +24,11 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
+        // 确保从 JSON 对象中提取 'text' 字段
+        const replyText = data.text || "无回复";
         // 在聊天界面显示回复
         displayMessage('You: ' + message);
-        displayMessage('Bot: ' + data.reply);
+        displayMessage('Bot: ' + replyText);
     })
     .catch(error => {
         console.error('发送消息失败:', error);
@@ -61,7 +65,7 @@ function updateConfig() {
         alert(message);
         // 重新加载 live2d-frame
         const live2dFrame = document.getElementById('live2d-frame');
-        live2dFrame.src = "http://localhost:5173/";
+        live2dFrame.src = live2dUrlPath;
     })
     .catch(error => console.error('配置更新失败:', error));
 }

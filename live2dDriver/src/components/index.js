@@ -92,11 +92,24 @@ const getByteFrequencyData = (analyser, frequencyData) => {
     return frequencyData;
 };
 
+// 添加一个新的函数来获取和应用动作
+async function loadAndApplyMotion(model,live2dmotion,live2dexpression) {
+    //model.expression(live2dexpression);
+    model.motion(live2dmotion, undefined, "IDLE");
+}
+
 async function loadAndPlayAudio(audioCtx, analyser, model) {
   let text;
+  let live2dmotion;
+  let live2dexpression;
   try {//获取待读文本
     const response = await fetch(config.textApiBaseUrl);
-    text = await response.text();
+    const data = await response.json(); // 解析 JSON 对象
+    
+    // 现在您可以访问 data.text, data.model 和 data.expression
+    text = data.text; // 获取文本内容
+    live2dmotion = data.motion; // 获取模型信息
+    live2dexpression = data.expression; // 获取表情信息
 } catch (error) {
     console.error('Failed to get text from the server', error);
     return;
@@ -108,6 +121,10 @@ if (text === previousText) {
         loadAndPlayAudio(audioCtx, analyser, model);
     }, 100);
     return;
+}
+if (text !== previousText) {
+    // 只有在文本改变时才获取和应用新动作
+    await loadAndApplyMotion(model,live2dmotion,live2dexpression);
 }
 
 previousText = text;  
