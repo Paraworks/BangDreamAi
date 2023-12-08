@@ -39,7 +39,7 @@ python chatgpt.py
 见[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)
 ## 控制&网页部署(可在页面内更改模型配置)
 ```
-cd liveStream
+cd controller
 npm install 
 node server.js
 #会显示 面板运行在 http://localhost:3000  这就是编译部署下的控制&网页面板
@@ -54,7 +54,7 @@ python OBS.py
 #### live2d 配置
 - 来源 > + > 浏览器 > 新建 > URL：填入上一步生成的live2d链接，一般是localhost:xxxx
 #### [弹幕姬](https://chat.bilisc.com/)
-- 来源 > + > 浏览器 > 新建 > URL：参照说明(https://chat.bilisc.com/help)填入链接以及css
+- 来源 > + > 浏览器 > 新建 > URL：参照[说明](https://chat.bilisc.com/help)填入链接以及css
 #### B 站推流配置
 - (obs内)设置（Preferences）> 直播 > 服务 > 自定义 > 填写 bilibili服务器以及推流码...
 - 推流码填写「B 站首页 > 头像 > 推荐服务 > 直播中心 > 左侧“我的直播间”> 填好直播分类、房间标题 > 开始直播，然后会显示的串流密钥」
