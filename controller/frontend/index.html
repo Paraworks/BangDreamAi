@@ -20,9 +20,16 @@
 
 <div class="draggable config-box" id="config-container" style="display: none;">
     <div class="config-header">配置设置</div>
-    <textarea class="config-input" id="config-input"></textarea>
+    <label>模型路径: <input type="text" id="config-modelPath"></label><br>
+    <label>TTS API: <input type="text" id="config-ttsApiBaseUrl"></label><br>
+    <label>文本 API: <input type="text" id="config-textApiBaseUrl"></label><br>
+    <label>Live2D URL: <input type="text" id="config-live2dUrlPath"></label><br>
+    <label>Chatbot API URL: <input type="text" id="config-chatbotApiUrl"></label><br>
+    <label>音量: <input type="number" id="config-volum" min="0" max="1" step="0.1"></label><br>
+    <label>开口值: <input type="number" id="config-openV" min="0" max="100"></label><br>
     <button class="send-button" onclick="updateConfig()">更新配置</button>
 </div>
+
 
 <button class="config-toggle" onclick="toggleConfig()">配置</button>
 

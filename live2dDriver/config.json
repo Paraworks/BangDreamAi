@@ -1,7 +1,9 @@
 {
-  "modelPath": "../Resources/mzl/mzl.model.json",
+  "modelPath": "../Resources/mzl/model.json",
   "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=蘭&",
   "textApiBaseUrl": "http://127.0.0.1:3000/show",
-  "volum": 0.7,
+  "live2dUrlPath": "http://localhost:5173",
+  "chatbotApiUrl": "http://127.0.0.1:8080/chat",
+  "volum": 1,
   "openV": 30
 }

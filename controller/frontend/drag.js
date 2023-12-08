@@ -1,3 +1,5 @@
+// drag.js
+
 document.addEventListener('DOMContentLoaded', function() {
     let draggables = document.querySelectorAll('.draggable');
     draggables.forEach(draggable => {

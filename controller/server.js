@@ -17,7 +17,7 @@ app.use(express.static('frontend'));
 
 let latestReply = {
     text: "",
-    model: "default",
+    model: "idle0",
     expression: "default"
 };
 
@@ -65,5 +65,5 @@ app.get('/show', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`服务器运行在 http://localhost:${port}`);
+    console.log(`面板运行在 http://localhost:${port}`);
 });

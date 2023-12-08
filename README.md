@@ -12,21 +12,11 @@ cd dist
 #把live2dDriver/src文件夹拖到dist里面
 http-server
 ```
-## 自定义配置
-见[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)
 ## live2d模型
 BangDream的live2d可以直接从bestdori手动下载。Github上也有许多提取好的仓库
 ### [五团(卡面比较多)](https://github.com/seia-soto/BanG-Dream-Live2D)
 ### [七团](https://github.com/Eikanya/Live2d-model/tree/master/BanG%20Dream!)
 ### 你需要将这些模型放在[live2dDriver/Resources](https://github.com/Paraworks/BangDreamAi/tree/main/live2dDriver/Resources)下，并且在启动网页界面或者修改[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)文件来加载
-## 前端框架启动(可在页面内更改模型配置)
-```
-cd liveStream
-npm install 
-node server.js
-#编译部署
-#还没试
-```
 ## 启动TTS合成
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
 ```
@@ -38,59 +28,31 @@ pip install Flask-CORS
 #把server.py替代为这个仓库的
 python server.py
 ```
-## 添加chatbot
-自行修改[chatbotAPI.js](https://github.com/Paraworks/BangDreamAi/blob/main/liveStream/chatbotAPI.js)
-
-# 直播间部署(待更新)
+## 启动chatbot(默认chatgpt)
+自行修改[chatgpt.py](https://github.com/Paraworks/BangDreamAi/blob/main/chatgpt.py)的相关配置以及逻辑(如果需要)
 ```
-python launcher.py
-```
-添加聊天机器人(以chatgpt为例)
-```
-#阅读 launcher.py 删除所有相关注释启动gpt
-pip install openai
-python launcher.py
-```
-## 直播间设置
-部署弹幕监听和chatbot
-阅读并且修改[chatgpt.py](https://github.com/Paraworks/BangDreamAi/blob/main/chatgpt.py)的配置
-```
-pip install bilibili-api-python
 pip install Flask
 pip install openai
 python chatgpt.py
 ```
-直播间的弹幕会被纪录下来，并且由chatgpt生成回复，可以先测试完再进入下一步
-启动[launcher.py](https://github.com/Paraworks/BangDreamAi/blob/main/launcher.py)监听回复结果
+## 默认配置
+见[config.json](https://github.com/Paraworks/BangDreamAi/blob/main/live2dDriver/config.json)
+## 控制&网页部署(可在页面内更改模型配置)
 ```
-python launcher.py
+cd liveStream
+npm install 
+node server.js
+#会显示 面板运行在 http://localhost:3000  这就是编译部署下的控制&网页面板
 ```
-配置[TTS](https://nijigaku.top/2023/10/03/BangDreamTTS/):
+# 直播间部署(未测试)
+自行修改[OBS.py](https://github.com/Paraworks/BangDreamAi/blob/main/OBS.py)的相关配置以及逻辑(如果需要)
 ```
-git clone https://huggingface.co/spaces/Mahiruoshi/BangDream-Bert-VITS2
-cd BangDream-Bert-VITS2
-pip install -r requirements.txt
-#pip install Flask
-#pip install Flask-CORS
-#将app.py替换成TTS-example.py的内容
-python app.py
-```
-启动live2d。将[这个链接](https://gitee.com/liu_soon/live2d-pixi/tree/master/src/library)下的所有文件搬运到 live2d/src/library 下
-阅读并修改 [live2d/src/components/index.js](https://github.com/Paraworks/BangDreamAi/blob/main/live2d/src/components/index.js)的代码
-```
-#编译
-cd live2d
-npm install
-npm run dev
-# 因为是本机，可以直接在obs浏览器中用localhost加载模型
-npm run build
-cd dist
-#把live2d/src文件夹拖到dist里面
-http-server
+pip install bilibili-api-python
+python OBS.py
 ```
 ## OBS 配置详解：
 #### live2d 配置
-- 来源 > + > 浏览器 > 新建 > URL：填入上一步生成的live2d链接，一般是localhost:xxxx或者127.0.0.1:8080
+- 来源 > + > 浏览器 > 新建 > URL：填入上一步生成的live2d链接，一般是localhost:xxxx
 #### [弹幕姬](https://chat.bilisc.com/)
 - 来源 > + > 浏览器 > 新建 > URL：参照说明(https://chat.bilisc.com/help)填入链接以及css
 #### B 站推流配置

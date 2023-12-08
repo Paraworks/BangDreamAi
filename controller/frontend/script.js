@@ -1,5 +1,5 @@
 //script.js
-const live2dUrlPath = "http://localhost:5173/";
+let live2dUrlPath;
 
 function sendMessage() {
     const input = document.getElementById('chat-input');
@@ -51,24 +51,35 @@ function displayMessage(message) {
 
 
 function updateConfig() {
-    const configInput = document.getElementById('config-input');
-    const config = JSON.parse(configInput.value);
+    // 构建新的配置对象
+    const newConfig = {
+        modelPath: document.getElementById('config-modelPath').value,
+        ttsApiBaseUrl: document.getElementById('config-ttsApiBaseUrl').value,
+        textApiBaseUrl: document.getElementById('config-textApiBaseUrl').value,
+        live2dUrlPath: document.getElementById('config-live2dUrlPath').value, 
+        chatbotApiUrl: document.getElementById('config-chatbotApiUrl').value,
+        volum: parseFloat(document.getElementById('config-volum').value),
+        openV: parseInt(document.getElementById('config-openV').value)
+    };
+
+    // 发送配置更新的请求
     fetch('/updateConfig', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(config)
+        body: JSON.stringify(newConfig)
     })
     .then(response => response.text())
     .then(message => {
         alert(message);
         // 重新加载 live2d-frame
         const live2dFrame = document.getElementById('live2d-frame');
-        live2dFrame.src = live2dUrlPath;
+        live2dFrame.src = live2dUrlPath + "?model=" + encodeURIComponent(newConfig.modelPath); // 确保每次加载新的模型
     })
     .catch(error => console.error('配置更新失败:', error));
 }
+
 
 
 function toggleConfig() {
@@ -80,10 +91,17 @@ function getConfig() {
     fetch('/getConfig')
         .then(response => response.json())
         .then(config => {
-            document.getElementById('config-input').value = JSON.stringify(config, null, 2);
+            live2dUrlPath = config.live2dUrlPath;
+            document.getElementById('config-modelPath').value = config.modelPath;
+            document.getElementById('config-ttsApiBaseUrl').value = config.ttsApiBaseUrl;
+            document.getElementById('config-textApiBaseUrl').value = config.textApiBaseUrl;
+            document.getElementById('config-live2dUrlPath').value = config.live2dUrlPath || live2dUrlPath;
+            document.getElementById('config-chatbotApiUrl').value = config.chatbotApiUrl || chatbotApiUrl;
+            document.getElementById('config-volum').value = config.volum;
+            document.getElementById('config-openV').value = config.openV;
+            // 如果有其他配置项，也在这里更新它们
         })
         .catch(error => console.error('获取配置失败:', error));
 }
 
 window.onload = getConfig; // 页面加载时获取当前配置
-

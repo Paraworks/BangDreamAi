@@ -1,7 +1,17 @@
 // chatbotAPI.js
-const live2dModelPath = "E:/WorkSpace/Upload/BangDreamAi/live2dDriver/Resources/mzl/mzl.model.json";
+const fs = require('fs');
+const http = require('http');
 
-const live2dData = require(live2dModelPath);
+const configPath = '../live2dDriver/config.json';
+let live2dData;
+let chatbotApiUrl;
+
+function loadConfigAndModel() {
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const modelPath = config.modelPath.replace('..', '../live2dDriver');
+    live2dData = require(modelPath);
+    chatbotApiUrl = config.chatbotApiUrl || 'http://127.0.0.1:8080/chat'; // 默认值
+}
 
 function getRandomMotionAndExpression() {
     const motionKeys = Object.keys(live2dData.motions);
@@ -24,14 +34,41 @@ function getRandomMotionAndExpression() {
 function getChatbotResponse(message) {
     const { motion, expression } = getRandomMotionAndExpression();
 
-    // 构建回复
-    const reply = {
-        text: `回复: ${message}`,
-        motion: motion,
-        expression: expression
-    };
+    return new Promise((resolve, reject) => {
+        // 设置 HTTP 请求选项
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
 
-    return Promise.resolve(reply);
+        // 创建请求
+        const req = http.request(chatbotApiUrl, requestOptions, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                resolve({
+                    text: data || `回复失败: ${message}`,
+                    motion: motion,
+                    expression: expression
+                });
+            });
+        });
+
+        req.on('error', (error) => {
+            resolve({ // 使用 resolve 而非 reject，因为我们仍然返回一个回复
+                text: `回复失败: ${message}`,
+                motion: motion,
+                expression: expression
+            });
+        });
+
+        // 发送请求
+        req.write(JSON.stringify({ message: message }));
+        req.end();
+    });
 }
 
+loadConfigAndModel();
 module.exports = { getChatbotResponse };
