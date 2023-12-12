@@ -17,11 +17,13 @@ body, html {
 
 /* 聊天框样式 */
 .chat-box {
-    height: 75%; /* 高度 */
-    left: 0; /* 左边距 */
-    position: absolute; /* 绝对定位 */
-    top: 12.5%; /* 顶部距离 */
-    width: 12.5%; /* 宽度 */
+    position: absolute;
+    top: 12.5%;
+    left: 0;
+    width: 25%; /* 使用百分比宽度 */
+    max-width: 350px; /* 最大宽度限制 */
+    min-width: 200px; /* 最小宽度 */
+    height: 75%;
 }
 
 /* 聊天框和配置框的标题栏样式 */
@@ -41,7 +43,7 @@ body, html {
     flex-grow: 1; /* 弹性放大比例 */
     padding: 10px; /* 内边距 */
     word-wrap: break-word; /* 自动换行 */
-    /* overflow-y: hidden; */ /* 垂直方向溢出隐藏（当前注释掉） */
+    overflow-y: hidden;  /* 垂直方向溢出隐藏（当前注释掉） */
 }
 
 /* 可拖拽组件的公共样式 */
@@ -73,10 +75,11 @@ body, html {
     flex-direction: column;
     align-items: stretch;
     padding: 10px;
-    bottom: 12.5%; /* 底部距离 */
-    height: 50%; /* 高度 */
-    left: 0; /* 左边距 */
-    width: 30%; /* 宽度 */
+    width: 30%; /* 使用百分比宽度 */
+    max-width: 400px; /* 最大宽度限制 */
+    min-width: 250px; /* 最小宽度 */
+    left: 0;
+    position: absolute;
 }
 
 /* 配置输入框样式 */
@@ -104,6 +107,25 @@ body, html {
     background-color: rgba(255, 182, 193, 0.5); /* 浅粉色背景 */
     border: 1px solid rgba(255, 160, 135, 0.7); /* 边框颜色 */
 }
+
+/* 输入框和选择框的公共样式 */
+.config-box input, .config-box select {
+    flex-grow: 1;
+    margin-left: 10px;
+    background-color: rgba(255, 182, 193, 0.5); /* 浅粉色背景 */
+    border: 1px solid rgba(255, 160, 135, 0.7); /* 边框颜色 */
+    padding: 6px 10px; /* 内边距 */
+    border-radius: 4px; /* 圆角 */
+}
+
+/* 标签样式 */
+.config-box label {
+    display: flex;
+    flex-wrap: wrap; /* 允许内容换行 */
+    align-items: center; /* 垂直居中对齐 */
+    margin-bottom: 10px;
+}
+
 
 /* 发送按钮样式 */
 .send-button {

@@ -5,7 +5,7 @@ const cors = require('cors');
 const chatbotAPI = require('./chatbotAPI');
 const fs = require('fs');
 const configPath = '../live2dDriver/config.json';
-
+const path = require('path');
 const app = express();
 const port = 3000;
 
@@ -63,6 +63,18 @@ app.get('/show', (req, res) => {
     res.json(latestReply);
 });
 
+// 获取模型列表
+app.get('/listModels', (req, res) => {
+    const modelsDir = path.join(__dirname, '../live2dDriver/Resources');
+    fs.readdir(modelsDir, { withFileTypes: true }, (err, files) => {
+        if (err) {
+            res.status(500).send('无法读取模型目录');
+        } else {
+            const modelFolders = files.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+            res.json(modelFolders);
+        }
+    });
+});
 
 app.listen(port, () => {
     console.log(`面板运行在 http://localhost:${port}`);

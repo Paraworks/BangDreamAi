@@ -34,7 +34,7 @@ def chat():
         })
     except Exception as e:
         print('Error:', e)
-        return jsonify({'text': '回复失败', 'error': str(e)})
+        return jsonify({'text': 'chatgpt failed to response:'+user_message, 'error': str(e)})
 
 if __name__ == '__main__':
     app.run(port=8080)

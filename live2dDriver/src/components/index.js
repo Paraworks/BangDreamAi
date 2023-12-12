@@ -152,18 +152,19 @@ previousText = text;
           };
 
           let playing = true;
-          const o = 80;
+          const o = 100;//响度上限
           const arrayAdd = a => a.reduce((i, a) => i + a, 0);
 
           const run = () => {
               if (!playing) return;
               const frequencyData = getByteFrequencyData(analyser, new Uint8Array(analyser.frequencyBinCount));
               const arr = [];
-              for (let i = 0; i < 1000; i += o) {
+              for (let i = 0; i < config.volum; i += o) {
                   arr.push(frequencyData[i]);
               }
-              setMouthOpenY((arrayAdd(arr)*config.volum / arr.length - config.openV) / 60);
-              setTimeout(run, 1000 / 30);
+              setMouthOpenY((arrayAdd(arr) / arr.length - config.volum/*响度下限 */) / 60);
+              //
+              setTimeout(run, config.frequence);
           };
           run();
 

@@ -1,9 +1,10 @@
 {
-  "modelPath": "../Resources/mzl/model.json",
-  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=蘭&",
+  "modelPath": "../Resources/001_school_summer/model.json",
+  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=花音&",
   "textApiBaseUrl": "http://127.0.0.1:3000/show",
   "live2dUrlPath": "http://localhost:5173",
   "chatbotApiUrl": "http://127.0.0.1:8080/chat",
-  "volum": 1,
-  "openV": 30
+  "frequence": 0.5,
+  "volum": 70,
+  "upper": 800
 }

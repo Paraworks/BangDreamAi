@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<iframe class="live2d-frame" id="live2d-frame" src=""></iframe>
+<iframe class="live2d-frame" id="live2d-frame" src=""allow="autoplay"></iframe>
 
 
 <div class="draggable chat-box" id="chat-container">
@@ -20,13 +20,16 @@
 
 <div class="draggable config-box" id="config-container" style="display: none;">
     <div class="config-header">配置设置</div>
-    <label>模型路径: <input type="text" id="config-modelPath"></label><br>
+    <label>模型路径: <select id="config-modelPath"></select></label><br>
+    <label>乐队(school): <select id="config-band"></select></label><br>
+    <label>成员: <select id="config-speaker"></select></label><br>
     <label>TTS API: <input type="text" id="config-ttsApiBaseUrl"></label><br>
     <label>文本 API: <input type="text" id="config-textApiBaseUrl"></label><br>
     <label>Live2D URL: <input type="text" id="config-live2dUrlPath"></label><br>
     <label>Chatbot API URL: <input type="text" id="config-chatbotApiUrl"></label><br>
-    <label>音量: <input type="number" id="config-volum" min="0" max="1" step="0.1"></label><br>
-    <label>开口值: <input type="number" id="config-openV" min="0" max="100"></label><br>
+    <label>频率(决定长闭口速度),取0.5: <input type="number" id="config-frequence" min="0" max="1" step="0.1"></label><br>
+    <label>响度下限(类似于音量取决于角色,10-100),一般70: <input type="number" id="config-volum" min="10" max="100"></label><br>
+    <label>频率范围上限(也类似于音量,700左右): <input type="number" id="config-upper" min="100" max="1000"></label><br>
     <button class="send-button" onclick="updateConfig()">更新配置</button>
 </div>
 
