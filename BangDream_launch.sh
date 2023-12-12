@@ -12,5 +12,6 @@
 # 启动 controller
 (cd /app/BangDreamAi/controller && node server.js) &
 
-# 保持容器运行
+# 保持容器
+
 tail -f /dev/null
