@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify
 import openai
+import random
 
 app = Flask(__name__)
 
-# 将 YOUR_API_KEY 替换为您的 OpenAI API 密钥
 openai.api_key = 'YOUR_API_KEY'
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_message = request.json.get('message')
-    
+    data = request.json
+    user_message = data['message']
+    motions = data['motions']
+    expressions = data['expressions']
+
     try:
-        # 使用 OpenAI API 获取 GPT-3.5 的回复
+        # 使用 OpenAI API 获取回复
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -19,9 +22,19 @@ def chat():
                 {"role": "user", "content": user_message}
             ]
         )
-        return jsonify({'response': response.choices[0].message['content']})
+
+        # 随机选择一个 motion 和 expression
+        chosen_motion = random.choice(motions)
+        chosen_expression = random.choice(expressions)
+
+        return jsonify({
+            'text': response.choices[0].message['content'],
+            'motion': chosen_motion,
+            'expression': chosen_expression
+        })
     except Exception as e:
-        return jsonify({'error': str(e)})
+        print('Error:', e)
+        return jsonify({'text': '回复失败', 'error': str(e)})
 
 if __name__ == '__main__':
     app.run(port=8080)
