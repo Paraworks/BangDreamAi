@@ -1,0 +1,1 @@
+{"name":"211_default","model":"live2d\/bodyguard.moc","textures":["live2d\/texture_00.png"],"physics":"live2d\/bodyguard.physics","type":"Live2D Model Setting","motions":{"idle01":[{"file":"live2d\/211_general_idle01.mtn","fade_in":2000,"fade_out":2000}]},"expressions":[]}

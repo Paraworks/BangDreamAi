@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/earcut`
+
+# Summary
+This package contains type definitions for earcut (https://github.com/mapbox/earcut#readme).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/earcut.
+
+### Additional Details
+ * Last updated: Fri, 15 May 2020 04:09:13 GMT
+ * Dependencies: none
+ * Global values: `earcut`
+
+# Credits
+These definitions were written by [Adrian Leonhard](https://github.com/NaridaL).

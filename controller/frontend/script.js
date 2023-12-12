@@ -20,6 +20,7 @@ const BandList = {
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value;
+    const selectedSpeaker = document.getElementById('config-speaker').value; // 获取当前选择的成员名
 
     // 检查输入是否为空
     if (!message.trim()) {
@@ -43,8 +44,8 @@ function sendMessage() {
         // 确保从 JSON 对象中提取 'text' 字段
         const replyText = data.text || "无回复";
         // 在聊天界面显示回复
-        displayMessage('You: ' + message);
-        displayMessage('Bot: ' + replyText);
+        displayMessage(':' + message);
+        displayMessage(selectedSpeaker + ': ' + replyText);
     })
     .catch(error => {
         console.error('发送消息失败:', error);

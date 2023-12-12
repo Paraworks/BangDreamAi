@@ -1,10 +1,17 @@
 from flask import Flask, request, jsonify
 import openai
 import random
+import requests
+import urllib.parse
 
 app = Flask(__name__)
 
 openai.api_key = 'YOUR_API_KEY'
+
+def qingyunke(msg):
+    url = f'http://api.qingyunke.com/api.php?key=free&appid=0&msg={urllib.parse.quote(msg)}'
+    html = requests.get(url)
+    return html.json()["content"]
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -34,7 +41,14 @@ def chat():
         })
     except Exception as e:
         print('Error:', e)
-        return jsonify({'text': 'chatgpt failed to response:'+user_message, 'error': str(e)})
+        # 调用青云客 API 作为替代方案
+        fallback_response = qingyunke(user_message)
+        return jsonify({
+            'text': fallback_response,
+            'motion': random.choice(motions),
+            'expression': random.choice(expressions),
+            'error': str(e)
+        })
 
 if __name__ == '__main__':
     app.run(port=8080)

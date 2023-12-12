@@ -77,5 +77,5 @@ app.get('/listModels', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`面板运行在 http://localhost:${port}`);
+    console.log(`面板运行在 http://127.0.0.1:${port}`);
 });

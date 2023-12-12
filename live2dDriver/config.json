@@ -1,6 +1,6 @@
 {
-  "modelPath": "../Resources/001_school_summer/model.json",
-  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=花音&",
+  "modelPath": "../Resources/018_live_event_55_ssr/model.json",
+  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=千聖&",
   "textApiBaseUrl": "http://127.0.0.1:3000/show",
   "live2dUrlPath": "http://localhost:5173",
   "chatbotApiUrl": "http://127.0.0.1:8080/chat",
