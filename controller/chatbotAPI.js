@@ -1,7 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 
-const configPath = '../live2dDriver/config.json';
+const configPath = '../config.json';
 let live2dData;
 let chatbotApiUrl;
 

@@ -1,11 +1,19 @@
 # 完全网页端部署的轻量化AIvtuber 
+## 启动chatbot(默认chatgpt)
+自行修改[chatgpt.py](https://github.com/Paraworks/BangDreamAi/blob/main/chatgpt.py)的相关配置以及逻辑(如果需要)
+```
+git clone git clone -b docker --single-branch https://github.com/Paraworks/BangDreamAi.git
+cd BangDreamAi
+pip install Flask
+pip install openai
+python chatgpt.py
+```
 ## live2d驱动部署
 ```
 #编译部署
 cd live2dDriver
-npm install
-# 本机测试,部署在5173端口
-npm run dev
+#编译部署，默认8081端口
+http-server
 ```
 ## 启动TTS合成
 ```
@@ -14,15 +22,8 @@ cd MyGO_VIts-bert
 pip install -r requirements.txt
 pip install Flask
 pip install Flask-CORS
+#端口5000
 python server.py
-```
-## 启动chatbot(默认chatgpt)
-自行修改[chatgpt.py](https://github.com/Paraworks/BangDreamAi/blob/main/chatgpt.py)的相关配置以及逻辑(如果需要)
-```
-cd ..
-pip install Flask
-pip install openai
-python chatgpt.py
 ```
 ```
 cd controller
