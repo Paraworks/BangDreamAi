@@ -12,7 +12,7 @@ python chatgpt.py
 ```
 #编译部署
 cd live2dDriver
-#编译部署，默认8081端口
+#编译部署,8081端口
 http-server
 ```
 ## 启动TTS合成
