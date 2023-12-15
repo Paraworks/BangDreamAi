@@ -7,6 +7,12 @@ body, html {
     /* overflow: hidden; */ /* 溢出隐藏（当前注释掉） */
 }
 
+
+.hidden-input {
+    display: none;
+}
+
+
 /* 聊天框内的输入框样式 */
 .chat-input {
     background-color: rgba(255, 180, 193, 0.85); /* 背景色 */

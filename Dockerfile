@@ -1,38 +1,34 @@
-# 使用带有 Node.js 和 Python 的基础镜像
-FROM cimg/python:3.11-node
+FROM continuumio/miniconda3
 
-# 设置工作目录
+# 更新并安装 Node.js 和 npm
+RUN apt-get update && apt-get install -y npm nodejs
+
+# 安装全局 http-server 用于 live2dDriver
+RUN npm install -g http-server
+
+# 设置工作目录到 /app
 WORKDIR /app
 
 # 克隆 BangDreamAi 仓库
-RUN git clone -b docker --single-branch https://github.com/Paraworks/BangDreamAi.git
+RUN git clone -b docker --single-branch https://github.com/Paraworks/BangDreamAi.git /app/BangDreamAi
+WORKDIR /app/BangDreamAi
 
-# 安装 chatgpt.py 相关依赖
-RUN pip install Flask openai
-
-# 安装 http-server 用于 live2dDriver
-RUN npm install -g http-server
+# 创建 Conda 环境并安装 chatgpt.py 相关依赖
+RUN conda create -n chatgpt python=3.8 -y \
+    && echo "source activate chatgpt" >> ~/.bashrc \
+    && /bin/bash -c "source activate chatgpt && pip install Flask openai requests"
 
 # 安装 live2dDriver 依赖
-RUN cd /app/BangDreamAi/live2dDriver \
-    && npm install
-
-# 克隆 MyGO_VIts-bert 仓库并安装依赖
-RUN git clone https://huggingface.co/spaces/Mahiruoshi/MyGO_VIts-bert \
-    && cd /app/MyGO_VIts-bert \
-    && pip install -r requirements.txt \
-    && pip install Flask Flask-CORS
+RUN cd /app/BangDreamAi/live2dDriver && npm install
 
 # 安装 controller 依赖
-RUN cd /app/BangDreamAi/controller \
-    && npm install
+RUN cd /app/BangDreamAi/controller && npm install
 
-# 暴露需要的端口
-EXPOSE 8081 5000 3000
+# 暴露所需端口
+EXPOSE 8081 3000 8080
 
 # 启动所有服务
-CMD sh -c 'cd /app/BangDreamAi && python chatgpt.py & \
-           cd /app/BangDreamAi/live2dDriver && http-server -p 8081 & \
-           cd /app/MyGO_VIts-bert && python server.py & \
-           cd /app/BangDreamAi/controller && node server.js & \
-           tail -f /dev/null'
+CMD /bin/bash -c "source activate chatgpt && cd /app/BangDreamAi && python chatgpt.py &" && \
+    /bin/bash -c "cd /app/BangDreamAi/live2dDriver && http-server -p 8081 &" && \
+    /bin/bash -c "cd /app/BangDreamAi/controller && node server.js &" && \
+    tail -f /dev/null

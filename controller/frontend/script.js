@@ -71,6 +71,7 @@ function updateConfig() {
     // 构建新的配置对象
     const newConfig = {
         modelPath: document.getElementById('config-modelPath').value,
+        ttsUrl: document.getElementById('config-ttsUrl').value,
         ttsApiBaseUrl: document.getElementById('config-ttsApiBaseUrl').value,
         textApiBaseUrl: document.getElementById('config-textApiBaseUrl').value,
         live2dUrlPath: document.getElementById('config-live2dUrlPath').value, 
@@ -125,6 +126,7 @@ function getConfig() {
         .then(response => response.json())
         .then(config => {
             live2dUrlPath = config.live2dUrlPath;
+            document.getElementById('config-ttsUrl').value = config.ttsUrl;
             document.getElementById('config-ttsApiBaseUrl').value = config.ttsApiBaseUrl;
             document.getElementById('config-textApiBaseUrl').value = config.textApiBaseUrl;
             document.getElementById('config-live2dUrlPath').value = config.live2dUrlPath || live2dUrlPath;
@@ -154,7 +156,8 @@ function updateSpeakerSelect(band) {
 function updateTtsApiUrl() {
     const band = document.getElementById('config-band').value;
     const speaker = document.getElementById('config-speaker').value;
-    document.getElementById('config-ttsApiBaseUrl').value = `http://127.0.0.1:5000/tts?speaker=${speaker}&`;
+    const ttsUrl = document.getElementById('config-ttsUrl').value;
+    document.getElementById('config-ttsApiBaseUrl').value = `${ttsUrl}?speaker=${speaker}&`;
 }
 
 function loadBandsAndSpeakers() {

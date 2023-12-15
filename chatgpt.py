@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 import openai
 import random
 import requests
@@ -12,6 +12,20 @@ def qingyunke(msg):
     url = f'http://api.qingyunke.com/api.php?key=free&appid=0&msg={urllib.parse.quote(msg)}'
     html = requests.get(url)
     return html.json()["content"]
+
+@app.route('/')
+def index():
+    return render_template_string("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Embedded Page</title>
+        </head>
+        <body>
+            <iframe src="http://127.0.0.1:3000" style="width:100%; height:100vh; border:none;"></iframe>
+        </body>
+        </html>
+    """)
 
 @app.route('/chat', methods=['POST'])
 def chat():

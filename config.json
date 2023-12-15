@@ -1,10 +1,11 @@
 {
-  "modelPath": "../Resources/002_live_event_22_sr/model.json",
-  "ttsApiBaseUrl": "http://127.0.0.1:5000/tts?speaker=香澄&",
+  "modelPath": "../Resources/002_yukata/model.json",
+  "ttsUrl": "https://mahiruoshi-bert-vits2-api.hf.space/",
+  "ttsApiBaseUrl": "https://mahiruoshi-bert-vits2-api.hf.space/?speaker=香澄&",
   "textApiBaseUrl": "http://127.0.0.1:3000/show",
   "live2dUrlPath": "http://127.0.0.1:8081",
   "chatbotApiUrl": "http://127.0.0.1:8080/chat",
   "frequence": 0.5,
   "volum": 70,
-  "upper": 800
+  "upper": 700
 }
