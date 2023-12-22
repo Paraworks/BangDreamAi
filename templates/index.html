@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BangDreamAI</title>
+    <link rel="stylesheet" href="./static/assets/styles.css">
+    <script type="module" crossorigin src="./static/assets/index.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <canvas id="canvas_view"></canvas>
+    
+    <!-- 文本聊天组件 -->
+    <div id="chat-container" class="draggable">
+        <textarea id="chat-input"></textarea>
+        <button id="send-button">发送</button>
+    </div>
+    <input type="hidden" id="config-ttsApiBaseUrl">
+    <input type="hidden" id="config-ttsUrl">
+
+    <!-- 控制面板组件 -->
+    <div id="control-panel" class="draggable">
+        <select id="config-band"></select>
+        <select id="config-speaker"></select>
+        <input type="number" id="frequency-input" placeholder="Frequency">
+        <input type="number" id="volume-input" placeholder="Volume">
+        <input type="number" id="upper-input" placeholder="Upper">
+        <select id="model-path-select"></select> <!-- 修改为下拉框 -->
+        <button id="apply-settings">应用设置</button>
+    </div>
+
+    <!-- 引入JavaScript文件 -->
+    <script>
+        window.sessionId = "{{ session_id }}";
+    </script>
+    <script src="./static/assets/main.js"></script>
+    <script src="./static/src/library/live2d.min.js"></script>
+    <script src="./static/src/library/live2dcubismcore.min.js"></script>
+</body>
+</html>
