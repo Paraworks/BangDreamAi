@@ -1,4 +1,5 @@
 # 完全网页端部署的轻量化AIvtuber 
+# 此为开发版，编译版见该[分支](https://github.com/Paraworks/BangDreamAi/tree/docker)
 ## live2d驱动部署
 ```
 #编译部署
