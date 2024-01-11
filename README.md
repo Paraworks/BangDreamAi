@@ -1,34 +1,7 @@
 # 开发日志
-```
-#命令tree /F /A
-
-\---BangDreamAI
-    +---config.py   #配置文件
-    |  
-    +---manager.py  #启动文件
-    |  
-    +---README.md   #说明文件
-    |   
-    \---BangDreamAIFlask    #app包
-        +---__init__.py     #初始化文件
-        |
-        +---models          #模型类
-        |
-        +---views           #视图类
-        |
-        +---controllers     #控制类
-        |
-        +---libs            #外部包
-        |
-        +---static          #静态文件夹
-        |
-        +---templates       #模板文件夹
-        |
-        \---utils           #方法以及类
-```
 # 技术栈
-Flask mysql redis jinja2
-
+Flask sqlite jinja2
+# 结构
 ```
 \---BangDreamAI
 |   app.py
@@ -41,15 +14,15 @@ Flask mysql redis jinja2
     |
     +---controllers
     |       chat.py
-    |       config.py
+    |       content.py
     |       listModels.py
     |       response.py
     |       session.py
     |       __init__.py
     |
     +---models
-    |       configManager.py
-    |       databaseManager.py
+    |       config.py
+    |       database.py
     |
     +---static
     |   +---components
