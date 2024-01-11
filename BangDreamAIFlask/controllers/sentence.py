@@ -1,7 +1,10 @@
 from flask import  jsonify, request
 from . import controllers
+from utils.chat import process_message
+from utils.emotion import emotion_classifier
+import json
 
-@controllers.route('/chat/<session_id>', methods=['POST'])
+@controllers.route('/sentence/<session_id>', methods=['POST'])
 def chat(session_id):
     data = request.json
     message = data.get('message')
@@ -12,14 +15,12 @@ def chat(session_id):
     chat_response = process_message(message)
 
     # 随机选择一个动作和表情
-    chosen_motion = random.choice(motions) if motions else None
-    chosen_expression = random.choice(expressions) if expressions else None
-
+    emotion, motion, motion = emotion_classifier(chat_response, motions, expressions)
     # 更新响应数据
     response_data = {
         "response": chat_response,
-        "motion": chosen_motion,
-        "expression": chosen_expression
+        "motion": motion,
+        "expression": motion
     }
     responses[session_id] = response_data
 

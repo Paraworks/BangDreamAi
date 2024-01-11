@@ -1,7 +1,7 @@
 from flask import  jsonify, request
 from . import controllers
 
-@controllers.route('/config/<session_id>', methods=['GET', 'POST'])
+@controllers.route('/content/<session_id>', methods=['GET', 'POST'])
 def config(session_id):
     if request.method == 'POST':
         updated_config = request.json
