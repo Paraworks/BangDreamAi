@@ -1,34 +1,41 @@
-from flask import Flask, request, jsonify
+import unittest
 from BangDreamAIFlask.models.database import Database
 from BangDreamAIFlask.models.config import Config
+from flask import Flask
+import json
 
-port = 5001
-app = Flask(__name__)
+class TestDatabase(unittest.TestCase):
+    def setUp(self):
+        self.app = Flask(__name__)
+        with self.app.app_context():
+            self.db = Database(self.app)
+            self.db.create_table('test')
+            self.config = Config('config.json')
 
-with app.app_context():
-    db = Database(app)
-    db.create_table('test')
+    def test_insert_and_read(self):
+        with self.app.app_context():
+            for key, value in self.config.__dict__.items():
+                self.db.insert('test', key, value)
+            for key, value in self.config.__dict__.items():
+                self.assertEqual(self.db.read('test', key), value)
 
-    for key, value in Config('config.json').__dict__.items():
-        db.insert('test', key, value)
-    for key, value in Config('config.json').__dict__.items():
-        print(key, db.read('test', key))
+    def test_delete_and_read(self):
+        with self.app.app_context():
+            for key in self.config.__dict__.keys():
+                self.db.delete('test', key)
+                result = self.db.read('test', key)
+                self.assertIsNone(result if result is None else json.loads(result))
 
-@app.teardown_appcontext
-def close_connection(exception):
-    if db is not None:
-        db.close()
+    def test_update_and_read(self):
+        with self.app.app_context():
+            for key, value in self.config.__dict__.items():
+                new_value = str(value) + '_updated'
+                self.db.update('test', key, new_value)
+                self.assertEqual(self.db.read('test', key), new_value)
 
-@app.route('/config/', methods=['GET', 'POST'])
-def config():
-    json = {}
-    if request.method == 'POST':
-        for key, value in request.form.items():
-            db.update('test', key, value)
-    for key in Config('config.json').__dict__.keys():
-        json[key] = db.read('test', key)
-    return jsonify(json)
-        
+    def tearDown(self):
+        with self.app.app_context():
+            self.db.close()
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=port,debug=True)
+    unittest.main()

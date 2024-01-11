@@ -52,7 +52,8 @@ class Database:
     def read(self, table_name, key):
         conn, cursor = self.get_db()
         cursor.execute(f"SELECT value FROM {table_name} WHERE key = ?", (key,))
-        return json.loads(cursor.fetchone()[0])
+        result = cursor.fetchone()
+        return None if result is None else json.loads(result[0])
 
     def close(self):
         conn, cursor = self.get_db()
