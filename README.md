@@ -15,12 +15,12 @@ Flask sqlite jinja2
     |   __init__.py
     |
     +---controllers
+    |       __init__.py
     |       content.py
     |       listModels.py
-    |       response.py
     |       sentence.py
     |       session.py
-    |       __init__.py
+    |       task.py
     |
     +---models
     |       config.py

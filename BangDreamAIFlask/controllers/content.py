@@ -5,7 +5,7 @@ from . import controllers
 session_id = 'test'
 
 @controllers.route('/content/<session_id>', methods=['GET', 'POST'])
-def config(session_id):
+def content(session_id):
     db = app.config['db']
     if request.method == 'POST':
         updated_config = request.json
