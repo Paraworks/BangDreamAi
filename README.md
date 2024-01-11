@@ -6,6 +6,8 @@ Flask sqlite jinja2
 \---BangDreamAI
 |   app.py
 |   config.json
+|   database_test.py
+|   database_usecase.py
 |   README.md
 |   requirements.txt
 |
@@ -13,10 +15,10 @@ Flask sqlite jinja2
     |   __init__.py
     |
     +---controllers
-    |       chat.py
     |       content.py
     |       listModels.py
     |       response.py
+    |       sentence.py
     |       session.py
     |       __init__.py
     |
@@ -38,6 +40,20 @@ Flask sqlite jinja2
     |   |       pixi.min.js
     |   |
     |   \---Resources
+    |       +---001_2018_halloween
+    |       |   |   model.json
+    |       |   |
+    |       |   \---live2d
+    |       |           001_general_angry01.exp
+    |       |           ......
+    |       |           001_general_f18.exp
+    |       |           001_general_gattsu01.mtn
+    |       |           ......
+    |       |           001_live_event_47_ssr_wink01.mtn
+    |       |           kasumi_2018halloween.moc
+    |       |           kasumi_2018halloween.physics
+    |       |           texture_00.png
+    |       |
     |       \---001_school_summer
     |           |   model.json
     |           |
@@ -62,11 +78,12 @@ Flask sqlite jinja2
     |           base.html
     |
     +---utils
-    |       chatgpt.py
+    |       chat.py
     |       emotion.py
     |       TTS.py
     |
     \---views
             index.py
             __init__.py
+
 ```

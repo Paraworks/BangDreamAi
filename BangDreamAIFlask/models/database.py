@@ -27,6 +27,12 @@ class Database:
         conn, cursor = self.get_db()
         cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} (key TEXT PRIMARY KEY, value TEXT)")
 
+    def get_all(self, table_name):
+        conn, cursor = self.get_db()
+        cursor.execute(f"SELECT * FROM {table_name}")
+        result = cursor.fetchall()
+        return {key: json.loads(value) for key, value in result}
+
     def insert(self, table_name, key, value):
         conn, cursor = self.get_db()
         cursor.execute(f"SELECT key FROM {table_name} WHERE key = ?", (key,))
