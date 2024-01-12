@@ -8,10 +8,14 @@ def create_app():
     CORS(app)
     with app.app_context():
         db = Database(app)
-        db.create_table('test')
-
-        for key, value in Config('config.json').__dict__.items():
-            db.insert('test', key, value)
+        db.create_table('content', Config('content.json').read())
+        db.create_table('sentence', Config('content.json').read())
+        db.create_table('task', Config('task.json').read())
+        db.create_table('user', Config('user.json').read())
+        db.insert('content', Config('content.json').read())
+        db.insert('sentence', Config('content.json').read())
+        db.insert('task', Config('task.json').read())
+        db.insert('user', Config('user.json').read())
             
     # 注册蓝图
     from .views import views

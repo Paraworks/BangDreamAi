@@ -16,15 +16,11 @@ const BandList = {
 
 let ttsUrl = "http://127.0.0.1:8000";
 
-// 获取 sessionId
-function getSessionId() {
-    return "test"; 
-}
-
-// 更新模型配置
 async function updateModelConfig(config) {
-    const sessionId = getSessionId();
-    await fetch(`/api/content/${sessionId}`, {
+    const sessionId = 'test';
+    const storyID = 'init';
+    const sentenceId = 1;
+    await fetch(`/api/content/${sessionId}/${storyID}/${sentenceId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -44,7 +40,6 @@ async function updateModelConfig(config) {
 
 // 获取并显示最新配置
 async function fetchAndUpdateConfig() {
-    const sessionId = getSessionId();
     try {
         const tempConfigResponse = await fetch(`/api/get-temp-config`);
         const tempConfig = await tempConfigResponse.json();
@@ -56,9 +51,8 @@ async function fetchAndUpdateConfig() {
                 document.getElementById('config-band').value = configData.band || 'PoppinParty';
                 document.getElementById('config-speaker').value = configData.speaker || '香澄';
                 document.getElementById('config-ttsApiBaseUrl').value = configData.ttsApiBaseUrl;
-                document.getElementById('frequency-input').value = configData.frequence || 0.5;
+                document.getElementById('frequence-input').value = configData.frequence || 0.5;
                 document.getElementById('volume-input').value = configData.volum || 70;
-                document.getElementById('upper-input').value = configData.upper || 800;
                 const modelPathSelect = document.getElementById('model-path-select'); // 更新为新的下拉框 ID
             }
         }
@@ -69,7 +63,7 @@ async function fetchAndUpdateConfig() {
 
 // 发送聊天信息
 async function sendMessage(message) {
-    const sessionId = getSessionId();
+    const sessionId = 'test'; 
     const modelPathSelect = document.getElementById('model-path-select');
     const modelPath = modelPathSelect.value; // 获取当前选中的模型路径
 
@@ -125,9 +119,8 @@ document.getElementById('send-button').addEventListener('click', async function(
 });
 
 document.getElementById('apply-settings').addEventListener('click', async function() {
-    const frequency = document.getElementById('frequency-input').value;
+    const frequence = document.getElementById('frequence-input').value;
     const volume = document.getElementById('volume-input').value;
-    const upper = document.getElementById('upper-input').value;
     const modelPath = document.getElementById('model-path-select').value;
     const band = document.getElementById('config-band').value;
     const speaker = document.getElementById('config-speaker').value;
@@ -135,7 +128,7 @@ document.getElementById('apply-settings').addEventListener('click', async functi
     // 生成新的 ttsApiBaseUrl
     const ttsApiBaseUrl = `${ttsUrl}?speaker=${encodeURIComponent(speaker)}&`;
 
-    await updateModelConfig({ frequency, volume, upper, modelPath, ttsApiBaseUrl, band, speaker });
+    await updateModelConfig({ frequence, volume, modelPath, ttsApiBaseUrl, band, speaker });
 });
 
 // 页面加载时获取最新配置

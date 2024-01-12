@@ -23,44 +23,63 @@ class Database:
         if db is not None:
             db.close()
 
-    def create_table(self, table_name):
+    def create_table(self, table_name, data):
         conn, cursor = self.get_db()
-        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} (key TEXT PRIMARY KEY, value TEXT)")
+        columns = ", ".join([f"{key} {self.get_sqlite_type(value)}" for key, value in data.items()])
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({columns})")
+        conn.commit()
 
-    def get_all(self, table_name):
-        conn, cursor = self.get_db()
-        cursor.execute(f"SELECT * FROM {table_name}")
-        result = cursor.fetchall()
-        return {key: json.loads(value) for key, value in result}
-
-    def insert(self, table_name, key, value):
-        conn, cursor = self.get_db()
-        cursor.execute(f"SELECT key FROM {table_name} WHERE key = ?", (key,))
-        result = cursor.fetchone()
-        if result is None:
-            # Key does not exist, insert new key-value pair
-            cursor.execute(f"INSERT INTO {table_name} VALUES (?, ?)", (key, json.dumps(value)))
+    def get_sqlite_type(self, value):
+        if isinstance(value, int):
+            return 'INTEGER'
+        elif isinstance(value, float):
+            return 'REAL'
         else:
-            # Key exists, update value
-            cursor.execute(f"UPDATE {table_name} SET value = ? WHERE key = ?", (json.dumps(value), key))
-        conn.commit()
+            return 'TEXT'  # 包括字符串和 JSON 字符串
 
-    def delete(self, table_name, key):
+    def find(self, table_name, criteria):
         conn, cursor = self.get_db()
-        cursor.execute(f"DELETE FROM {table_name} WHERE key = ?", (key,))
-        conn.commit()
-
-    def update(self, table_name, key, value):
-        conn, cursor = self.get_db()
-        cursor.execute(f"UPDATE {table_name} SET value = ? WHERE key = ?", (json.dumps(value), key))
-        conn.commit()
-
-    def read(self, table_name, key):
-        conn, cursor = self.get_db()
-        cursor.execute(f"SELECT value FROM {table_name} WHERE key = ?", (key,))
+        query = f"SELECT * FROM {table_name} WHERE " + " AND ".join([f"{k} = ?" for k in criteria])
+        cursor.execute(query, tuple(criteria.values()))
         result = cursor.fetchone()
-        return None if result is None else json.loads(result[0])
+        if result:
+            # Get column names from cursor description
+            column_names = [column[0] for column in cursor.description]
+            # Pair column names with result values and convert to dictionary
+            result = dict(zip(column_names, result))
+        return result
+    
+    def insert(self, table_name, data):
+        conn, cursor = self.get_db()
+        processed_data = {k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in data.items()}
+        keys = ", ".join(processed_data.keys())
+        question_marks = ", ".join(["?"] * len(processed_data))
+        query = f"INSERT INTO {table_name} ({keys}) VALUES ({question_marks})"
+        cursor.execute(query, tuple(processed_data.values()))
+        conn.commit()
+
+    def update(self, table_name, primary_keys, new_data):
+        conn, cursor = self.get_db()
+        processed_data = {k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in new_data.items()}
+        update_clause = ", ".join([f"{k} = ?" for k in processed_data])
+        where_clause = " AND ".join([f"{k} = ?" for k in primary_keys])
+        query = f"UPDATE {table_name} SET {update_clause} WHERE {where_clause}"
+        cursor.execute(query, tuple(processed_data.values()) + tuple(primary_keys.values()))
+        conn.commit()
+    
+    def delete(self, table_name, criteria):
+        conn, cursor = self.get_db()
+        query = f"DELETE FROM {table_name} WHERE " + " AND ".join([f"{k} = ?" for k in criteria])
+        cursor.execute(query, tuple(criteria.values()))
+        conn.commit()
 
     def close(self):
         conn, cursor = self.get_db()
         conn.close()
+
+    def is_json(self, myjson):
+        try:
+            json_object = json.loads(myjson)
+        except ValueError as e:
+            return False
+        return True

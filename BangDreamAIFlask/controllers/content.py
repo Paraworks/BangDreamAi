@@ -2,17 +2,15 @@ from flask import  jsonify, request
 from flask import current_app as app
 from . import controllers
 
-session_id = 'test'
-
-@controllers.route('/content/<session_id>', methods=['GET', 'POST'])
-def content(session_id):
+@controllers.route('/content/<session_id>/<story_id>/<sentence_id>', methods=['GET', 'POST'])
+def content(session_id,story_id,sentence_id):
     db = app.config['db']
     if request.method == 'POST':
         updated_config = request.json
-        # 更新全局默认配置（除 textApiBaseUrl 外）
-        for key, value in updated_config.items():
-            if key != "textApiBaseUrl":
-                db.update('test', key, value)
+        if db.find('content', {"sessionID": session_id, "storyID": story_id, "sentenceId": sentence_id}):
+            db.update('content', {"sessionID": session_id, "storyID": story_id, "sentenceId": sentence_id}, updated_config)
+        else:
+            db.insert('content', updated_config)
         return jsonify({"success": True})
-    configs = db.get_all(session_id)
-    return jsonify(configs)
+    configs = db.find('content', {"sessionID": session_id, "storyID": story_id, "sentenceId": sentence_id})
+    return configs

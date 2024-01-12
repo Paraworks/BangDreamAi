@@ -1,35 +1,43 @@
-# 开发日志
 # 技术栈
 Flask sqlite jinja2
 # 结构
 ```
 \---BangDreamAI
 |   app.py
-|   config.json
-|   database_test.py
+|   content.json
 |   database_usecase.py
 |   README.md
 |   requirements.txt
+|   task.json
+|   user.json
 |
 \---BangDreamAIFlask
     |   __init__.py
     |
     +---controllers
-    |       __init__.py
+    |       chat.py
     |       content.py
+    |       editor.py
+    |       emotion.py
+    |       file.py
     |       listModels.py
     |       sentence.py
     |       session.py
-    |       task.py
+    |       __init__.py
     |
     +---models
     |       config.py
     |       database.py
     |
     +---static
+    |   +---assets
+    |   |       draggable.js
+    |   |       styles.css
+    |   |
     |   +---components
     |   |       index.js
     |   |       live2d.js
+    |   |       test_live2d.js
     |   |
     |   +---library
     |   |       iconfont.js
@@ -80,7 +88,7 @@ Flask sqlite jinja2
     +---utils
     |       chat.py
     |       emotion.py
-    |       TTS.py
+    |       tools.py
     |
     \---views
             index.py
