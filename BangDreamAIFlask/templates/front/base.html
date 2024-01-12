@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BangDreamAI</title>
-    <link rel="stylesheet" href="./static/assets/styles.css">
-    <script type="module" crossorigin src="./static/assets/index.js"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='assets/styles.css')}}">
+    <script type="module" crossorigin src="{{url_for('static',filename='components/test_live2d.js')}}"></script>
 </head>
 <body>
     <div id="app"></div>
@@ -35,8 +35,10 @@
     <script>
         window.sessionId = "{{ session_id }}";
     </script>
-    <script src="./static/assets/main.js"></script>
-    <script src="./static/src/library/live2d.min.js"></script>
-    <script src="./static/src/library/live2dcubismcore.min.js"></script>
+    <script src="{{url_for('static',filename='components/index.js')}}"></script>
+    <!--<script src="{{url_for('static',filename='components/test_live2d.js')}}"></script>-->
+    <script src="{{url_for('static',filename='library/pixi.min.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2d.min.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2dcubismcore.min.js')}}"></script>
 </body>
 </html>

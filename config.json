@@ -1,6 +1,7 @@
 {
-  "modelPath": "../static/Resources/001_live_event_47_ssr/model.json",
+  "modelPath": "../static/Resources/001_2018_halloween/model.json",
   "ttsApiBaseUrl": "http://127.0.0.1:8000/?is_chat=false&speaker=香澄&",
+  "textApiBaseUrl": "http://127.0.0.1:5000/api/sentence/test",
   "frequence": 0.5,
   "volum": 70,
   "upper": 800

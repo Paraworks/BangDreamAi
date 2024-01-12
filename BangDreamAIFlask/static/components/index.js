@@ -18,13 +18,13 @@ let ttsUrl = "http://127.0.0.1:8000";
 
 // 获取 sessionId
 function getSessionId() {
-    return window.sessionId; 
+    return "test"; 
 }
 
 // 更新模型配置
 async function updateModelConfig(config) {
     const sessionId = getSessionId();
-    await fetch(`/config/${sessionId}`, {
+    await fetch(`/api/content/${sessionId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ async function updateModelConfig(config) {
 async function fetchAndUpdateConfig() {
     const sessionId = getSessionId();
     try {
-        const tempConfigResponse = await fetch(`/get-temp-config`);
+        const tempConfigResponse = await fetch(`/api/get-temp-config`);
         const tempConfig = await tempConfigResponse.json();
         if (tempConfig && tempConfig.configurl) {
             const configResponse = await fetch(tempConfig.configurl);
@@ -81,7 +81,7 @@ async function sendMessage(message) {
 
         const chatData = { message, modelPath, motions, expressions };
 
-        const response = await fetch(`/chat/${sessionId}`, {
+        const response = await fetch(`/api/chat/${sessionId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(chatData)
@@ -99,12 +99,12 @@ async function sendMessage(message) {
 
 // 获取聊天机器人的回复
 async function getChatResponse(sessionId) {
-    await fetch(`/response/${sessionId}`)
+    await fetch(`/api/sentence/${sessionId}`)
     .then(response => response.json())
     .then(responseData => {
         displayResponse(responseData.response);
     })
-    .catch(error => console.error("Error fetching response: ", error));
+    .catch(error => console.error("Error fetching sentence: ", error));
 }
 
 // 显示聊天机器人的回复
@@ -200,7 +200,7 @@ function updateModelPath() {
     const speaker = document.getElementById('config-speaker').value;
     const modelPathSelect = document.getElementById('model-path-select'); // 使用正确的元素ID
 
-    fetch('/listModels')
+    fetch('/api/listModels')
         .then(response => response.json())
         .then(models => {
             const speakerModelNumber = getMemberModelNumber(band, speaker);

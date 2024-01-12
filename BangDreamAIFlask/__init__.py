@@ -1,10 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 from BangDreamAIFlask.models.database import Database
 from BangDreamAIFlask.models.config import Config
 
 def create_app():
     app = Flask(__name__)
-
+    CORS(app)
     with app.app_context():
         db = Database(app)
         db.create_table('test')

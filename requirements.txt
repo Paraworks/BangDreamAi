@@ -1,2 +1,3 @@
 Flask
 requests
+flask_cors
