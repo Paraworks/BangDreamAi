@@ -1,0 +1,34 @@
+/* Live2D 框架样式 */
+.live2d-frame {
+    border: none; /* 无边框 */
+    height: 100%; /* 高度 */
+    position: absolute; /* 绝对定位 */
+    right: 0; /* 右对齐 */
+    top: 0; /* 顶部对齐 */
+    width: 100%; /* 宽度 */
+}
+
+/* Example CSS styles */
+#chat-container, #user-config-container, #article-editor-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    display: none; /* Initially hidden */
+}
+
+/* Class to show the components */
+.show {
+    display: block;
+}
+
+/* Styling for the toggle button */
+button#btn-toggle {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+}

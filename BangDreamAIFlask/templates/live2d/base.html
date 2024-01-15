@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>live2d播放器</title>
+    <style>
+        /* 在这里添加你的 CSS */
+        body, html {
+            overflow: hidden; /* 隐藏滚动条 */
+        }
+
+        /* 对于特定元素，例如 canvas */
+        #canvas_view {
+            overflow: hidden;
+        }
+
+        /* 隐藏所有滚动条的样式 */
+        body {
+            -ms-overflow-style: none;  /* IE 和 Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        body::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari, Opera */
+        }
+        /* 你原有的 CSS */
+        :root {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <button id="startButton">启动</button>
+    <canvas id="canvas_view"></canvas>
+    <script type="module" src="{{url_for('static',filename='components/live2d.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2d.min.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2dcubismcore.min.js')}}"></script>
+</body>
+</html>

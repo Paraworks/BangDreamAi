@@ -3,4 +3,4 @@ from . import views
 
 @views.route('/')
 def index():
-    return render_template('front/base.html')
+    return render_template('front/interface.html')

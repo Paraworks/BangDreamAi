@@ -1,5 +1,5 @@
 from BangDreamAIFlask import create_app
-
+from flask import render_template
 port = 5000
 app = create_app()
 

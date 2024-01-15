@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from BangDreamAIFlask.models.database import Database
+from BangDreamAIFlask.models.database import Database, Content, Task, User
 from BangDreamAIFlask.models.config import Config
 
 def create_app():
@@ -8,15 +8,13 @@ def create_app():
     CORS(app)
     with app.app_context():
         db = Database(app)
-        db.create_table('content', Config('content.json').read())
-        db.create_table('sentence', Config('content.json').read())
-        db.create_table('task', Config('task.json').read())
-        db.create_table('user', Config('user.json').read())
-        db.insert('content', Config('content.json').read())
-        db.insert('sentence', Config('content.json').read())
-        db.insert('task', Config('task.json').read())
-        db.insert('user', Config('user.json').read())
-            
+        content = Config('content.json').read()
+        task = Config('task.json').read()
+        user = Config('user.json').read()
+        db.insert(Content, content)
+        db.insert(Task, task)
+        db.insert(User, user)
+        
     # 注册蓝图
     from .views import views
 

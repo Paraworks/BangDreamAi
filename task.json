@@ -1,7 +1,7 @@
 {
     "sessionID": "test",
-    "storyID": "user_story_001",
+    "taskID": "init",
     "contents": {
-      "sentence_1": 0.0
+      "sentence_1": 1
     }
   }

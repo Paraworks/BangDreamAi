@@ -1,4 +1,6 @@
 {
     "sessionID": "test",
-    "storyList": ["user_story_001"]
+    "tasks": {
+      "init": 0
+    }
   }

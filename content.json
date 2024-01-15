@@ -1,8 +1,8 @@
 {
     "sessionID": "test",
-    "storyID": "init",
+    "taskID": "init",
     "sentenceId": 1,
-    "modelPath": "../static/Resources/001_2018_halloween/model.json",
+    "modelPath": "../static/Resources/002_2018_dog/model.json",
     "ttsApiBaseUrl": "http://127.0.0.1:8000/?is_chat=false&speaker=香澄&",
     "textApiBaseUrl": "http://127.0.0.1:5000/api/sentence/test",
     "text": {
@@ -11,7 +11,8 @@
         "response": "初始化成功"
       },
     "frequence": 0.5,
-    "volume": 70,
+    "volum": 70,
+    "upper": 800,
     "background": "114.png",
     "speaker": "香澄",
     "band": "PoppinParty",

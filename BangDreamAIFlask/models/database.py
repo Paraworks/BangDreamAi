@@ -1,85 +1,77 @@
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 import json
-from flask import g
+
+db = SQLAlchemy()
+
+class Content(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sessionID = db.Column(db.String(80), nullable=False)
+    taskID = db.Column(db.String(120), nullable=False)
+    sentenceId = db.Column(db.Integer, nullable=False)
+    modelPath = db.Column(db.String(120), nullable=True)
+    ttsApiBaseUrl = db.Column(db.String(120), nullable=True)
+    textApiBaseUrl = db.Column(db.String(120), nullable=True)
+    text = db.Column(db.JSON, nullable=True)
+    frequence = db.Column(db.Float, nullable=True)
+    volum = db.Column(db.Integer, nullable=True)
+    upper = db.Column(db.Integer, nullable=True)
+    background = db.Column(db.String(120), nullable=True)
+    speaker = db.Column(db.String(50), nullable=True)
+    band = db.Column(db.String(50), nullable=True)
+    position = db.Column(db.String(50), nullable=True)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sessionID = db.Column(db.String(80), nullable=False)
+    taskID = db.Column(db.String(120), nullable=False)
+    contents = db.Column(db.JSON, nullable=True)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sessionID = db.Column(db.String(80), nullable=False)
+    tasks = db.Column(db.JSON, nullable=True)
 
 class Database:
     def __init__(self, app=None):
-        self.app = app
+        self.db = db
         if app is not None:
             self.init_app(app)
 
     def init_app(self, app):
-        self.db_name = 'test.db'
-        app.teardown_appcontext(self.teardown)
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        app.config['SQLALCHEMY_POOL_SIZE'] = 20  # Example pool size
+        self.db.init_app(app)
+        with app.app_context():
+            self.db.create_all()
 
-    def get_db(self):
-        if 'db' not in g:
-            g.db = sqlite3.connect(self.db_name)
-            g.cursor = g.db.cursor()
-        return g.db, g.cursor
-
-    def teardown(self, exception):
-        db = g.pop('db', None)
-        if db is not None:
-            db.close()
-
-    def create_table(self, table_name, data):
-        conn, cursor = self.get_db()
-        columns = ", ".join([f"{key} {self.get_sqlite_type(value)}" for key, value in data.items()])
-        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({columns})")
-        conn.commit()
-
-    def get_sqlite_type(self, value):
-        if isinstance(value, int):
-            return 'INTEGER'
-        elif isinstance(value, float):
-            return 'REAL'
+    def get_model(self, table_name):
+        if table_name == 'sentence':
+            return Sentence  # 假设 Sentence 是一个 SQLAlchemy 模型
+        elif table_name == 'content':
+            return Content  # 假设 Content 是一个 SQLAlchemy 模型
         else:
-            return 'TEXT'  # 包括字符串和 JSON 字符串
+            raise ValueError("Invalid table name")
 
-    def find(self, table_name, criteria):
-        conn, cursor = self.get_db()
-        query = f"SELECT * FROM {table_name} WHERE " + " AND ".join([f"{k} = ?" for k in criteria])
-        cursor.execute(query, tuple(criteria.values()))
-        result = cursor.fetchone()
-        if result:
-            # Get column names from cursor description
-            column_names = [column[0] for column in cursor.description]
-            # Pair column names with result values and convert to dictionary
-            result = dict(zip(column_names, result))
-        return result
-    
-    def insert(self, table_name, data):
-        conn, cursor = self.get_db()
-        processed_data = {k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in data.items()}
-        keys = ", ".join(processed_data.keys())
-        question_marks = ", ".join(["?"] * len(processed_data))
-        query = f"INSERT INTO {table_name} ({keys}) VALUES ({question_marks})"
-        cursor.execute(query, tuple(processed_data.values()))
-        conn.commit()
+    def find(self, model, criteria):
+        instance = model.query.filter_by(**criteria).first()
+        if instance:
+            return {column.name: getattr(instance, column.name) for column in instance.__table__.columns}
+        return None
 
-    def update(self, table_name, primary_keys, new_data):
-        conn, cursor = self.get_db()
-        processed_data = {k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in new_data.items()}
-        update_clause = ", ".join([f"{k} = ?" for k in processed_data])
-        where_clause = " AND ".join([f"{k} = ?" for k in primary_keys])
-        query = f"UPDATE {table_name} SET {update_clause} WHERE {where_clause}"
-        cursor.execute(query, tuple(processed_data.values()) + tuple(primary_keys.values()))
-        conn.commit()
-    
-    def delete(self, table_name, criteria):
-        conn, cursor = self.get_db()
-        query = f"DELETE FROM {table_name} WHERE " + " AND ".join([f"{k} = ?" for k in criteria])
-        cursor.execute(query, tuple(criteria.values()))
-        conn.commit()
+    def insert(self, model, data):
+        instance = model(**data)
+        self.db.session.add(instance)
+        self.db.session.commit()
 
-    def close(self):
-        conn, cursor = self.get_db()
-        conn.close()
+    def update(self, model, primary_keys, new_data):
+        instance = model.query.filter_by(**primary_keys).first()
+        if instance:
+            for key, value in new_data.items():
+                setattr(instance, key, value)
+            self.db.session.commit()
 
-    def is_json(self, myjson):
-        try:
-            json_object = json.loads(myjson)
-        except ValueError as e:
-            return False
-        return True
+    def delete(self, model, criteria):
+        model.query.filter_by(**criteria).delete()
+        self.db.session.commit()
