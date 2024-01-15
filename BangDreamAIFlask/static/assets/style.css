@@ -32,3 +32,61 @@ button#btn-toggle {
     right: 0;
     margin: 10px;
 }
+
+/* 基础样式 */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* 任务信息样式 */
+.task-data {
+    margin-bottom: 20px;
+}
+
+/* 每个句子块的样式 */
+.sentence-block {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+/* 每个句子块的标题样式 */
+.sentence-block h3 {
+    margin-top: 0;
+}
+
+/* 输入字段的样式 */
+.sentence-block input[type='text'] {
+    width: calc(100% - 20px);
+    margin: 5px 0;
+    padding: 5px;
+}
+
+/* 按钮样式 */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* 内容区域滚动样式 */
+#article-editor-container {
+    max-height: 500px;  /* 可根据需要调整高度 */
+    overflow-y: auto;
+}
+
+/* 调整其他界面组件的样式 */
+#chat-container, #user-config-container {
+    max-height: 500px; /* 根据需要调整 */
+    overflow-y: auto;
+}
