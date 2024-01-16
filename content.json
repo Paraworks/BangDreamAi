@@ -1,0 +1,24 @@
+{
+    "sessionID": "test",
+    "taskID": "init",
+    "sentenceId": 1,
+    "modelPath": "../static/Resources/002_2018_dog/model.json",
+    "ttsApiBaseUrl": "http://127.0.0.1:8000/?is_chat=false",
+    "textApiBaseUrl": "http://127.0.0.1:5000/api/sentence/test",
+    "text": {
+        "expression": null,
+        "motion": null,
+        "response": "初始化成功"
+      },
+    "frequence": 0.5,
+    "volum": 70,
+    "duration": 2,
+    "background": "114.png",
+    "speaker": "香澄",
+    "band": "PoppinParty",
+    "positionX": 300,
+    "positionY": 50,
+    "stopBreath": 0,
+    "mouseTrack": 1,
+    "scale": 0.3
+  }

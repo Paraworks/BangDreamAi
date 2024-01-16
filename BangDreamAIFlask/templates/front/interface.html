@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BangDreamAI</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='assets/style.css')}}">
+</head>
+<body>
+    <iframe class="live2d-frame" id="live2d-frame" src="" allow="autoplay"></iframe>
+<!-- Button to Toggle Components -->
+<button id="btn-toggle">Toggle View</button>
+
+<!-- Chat Interface -->
+<div id="chat-container">
+    <form id="chat-form" action="/chat/test" method="post">
+        <input type="text" id="user-input" name="user_input" placeholder="Enter your message here">
+        <button type="submit">Send</button>
+    </form>
+    <div id="chat-history"></div>
+</div>
+
+<!-- User Configuration Interface -->
+<div id="user-config-container">
+    <form id="user-config-form" method="post">
+        <!-- Configuration fields will be added here by JavaScript -->
+    </form>
+</div>
+
+<!-- Article Editor Interface -->
+<div id="article-editor-container">
+    <form id="article-editor-form" method="post">
+        <!-- Article content fields will be added here by JavaScript -->
+    </form>
+</div>
+<script>
+    window.sessionId = "{{ session_id }}";
+</script>
+<!-- External JavaScript -->
+<script src="{{url_for('static',filename='components/script.js')}}"></script>
+</body>
+</html>
