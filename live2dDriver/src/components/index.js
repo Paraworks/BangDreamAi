@@ -6,25 +6,78 @@ import {
 } from 'pixi-live2d-display';
 
 window.PIXI = PIXI;
-
+let sessionId = window.sessionId;
+let speaker = window.speaker;
 let previousText = ''; 
 let config  = {};
+let configpath = {};
+let lastmodelPath = {};
+let laststopBreath = {};
+let lastmouseTrack = {};
 export async function init() {
-    // 加载配置文件
-    try {
-        const configResponse = await fetch('../config.json');
-        config = await configResponse.json();
-        await startApp();
-    } catch (error) {
-        console.error('Failed to load config:', error);
-    }
+    const request = new XMLHttpRequest();
+    configpath = `http://127.0.0.1:5000/api/content/${sessionId}/init/1`;
+    request.open('GET', configpath, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            // 成功获取响应
+            config = JSON.parse(this.response);
+            startButton.addEventListener('click', async () => {
+                // 点击按钮开始应用程序，否则浏览器会拒绝加载
+                await startApp();
+        
+                // 你也可以将startButton.addEventListener方法整体注释掉用以直播(obs链接桌面声音)，取消第14行的注释
+                startButton.style.display = 'none';
+            });
+        } else {
+            console.error('Server reached, but it returned an error');
+        }
+    };
+
+    request.onerror = function() {
+        console.error('Failed to reach server');
+    };
+
+    request.send();
 }
 
+//刷新配置
+function refreshConfig() {
+    setInterval(() => {
+        const request = new XMLHttpRequest();
+        request.open('GET', configpath, true);
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                config = JSON.parse(this.response);
+                if (config.modelPath != lastmodelPath) {
+                    startApp();
+                }
+                if (config.stopBreath != laststopBreath) {
+                    startApp();
+                }
+                if (config.mouseTrack != lastmouseTrack) {
+                    startApp();
+                }
+            } else {
+                console.error('Server reached, but it returned an error');
+            }
+        };
+
+        request.onerror = function() {
+            console.error('Failed to reach server');
+        };
+
+        request.send();
+    }, 3000); // 每3秒刷新一次配置
+}
 async function startApp() {
+    refreshConfig();
     const model = await Live2DModel.from(config.modelPath, {
         motionPreload: MotionPreloadStrategy.NONE,
     });
-
+    lastmodelPath = config.modelPath;
+    lastmouseTrack = config.mouseTrack;
+    laststopBreath = config.stopBreath;
     const app = new PIXI.Application({
         view: document.getElementById('canvas_view'),
         transparent: true,
@@ -34,12 +87,22 @@ async function startApp() {
         height: '1080',
         width: '1800',
     });
-
-    model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
+    // 鼠标跟踪方法
+    if (config.mouseTrack == 1) {
+        model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }];
+    }
     app.stage.addChild(model);
-    model.scale.set(0.3);
-    model.x = 0;
-
+    model.scale.set(config.scale);
+    // 模型的位置,x,y相较于窗口左上角
+    model.x = config.positionX;
+    model.y = config.positionY;
+    if (config.stopBreath == 1) {
+        model.internalModel.angleXParamIndex = 999;
+        model.internalModel.angleYParamIndex = 999;
+        model.internalModel.angleZParamIndex = 999;
+        model.internalModel.bodyAngleXParamIndex = 999;
+        model.internalModel.breathParamIndex = 999;
+    }
     const a = new InternalModel(model);
     model.InternalModel = a;
 
@@ -59,6 +122,8 @@ async function startApp() {
 
     loadAndPlayAudio(audioCtx, analyser, model);
 }
+
+
 /*
 function addFrame(model) {
     const foreground = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -92,7 +157,7 @@ const getByteFrequencyData = (analyser, frequencyData) => {
     return frequencyData;
 };
 
-// 添加一个新的函数来获取和应用动作
+// 添加函数来获取和应用动作
 async function loadAndApplyMotion(model,live2dmotion,live2dexpression) {
     //model.expression(live2dexpression);
     model.motion(live2dmotion, undefined, "IDLE");
@@ -103,13 +168,9 @@ async function loadAndPlayAudio(audioCtx, analyser, model) {
   let live2dmotion;
   let live2dexpression;
   try {//获取待读文本
-    const response = await fetch(config.textApiBaseUrl);
-    const data = await response.json(); // 解析 JSON 对象
-    
-    // 现在您可以访问 data.text, data.model 和 data.expression
-    text = data.text; // 获取文本内容
-    live2dmotion = data.motion; // 获取模型信息
-    live2dexpression = data.expression; // 获取表情信息
+    text = config.text.response; // 获取文本内容
+    live2dmotion = config.text.motion; // 获取模型信息
+    live2dexpression = config.text.expression;
 } catch (error) {
     console.error('Failed to get text from the server', error);
     return;
@@ -130,7 +191,7 @@ if (text !== previousText) {
 previousText = text;  
   //将文本发送至tts服务
   const request = new XMLHttpRequest();
-  request.open('GET', `${config.ttsApiBaseUrl}text=${encodeURIComponent(text)}`, true);
+  request.open('GET', `${config.ttsApiBaseUrl}&speaker=${config.speaker}&text=${encodeURIComponent(text)}`, true);
   request.responseType = 'arraybuffer';
   request.onload = () => {
       audioCtx.decodeAudioData(request.response, (buffer) => {
@@ -163,7 +224,7 @@ previousText = text;
                   arr.push(frequencyData[i]);
               }
               setMouthOpenY((arrayAdd(arr) / arr.length - config.volum/*响度下限 */) / 60);
-              //
+              //频率
               setTimeout(run, config.frequence);
           };
           run();
