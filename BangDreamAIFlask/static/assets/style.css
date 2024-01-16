@@ -90,3 +90,8 @@ button:hover {
     max-height: 500px; /* 根据需要调整 */
     overflow-y: auto;
 }
+
+.container {
+    max-height: 500px; /* 限制最大高度 */
+    overflow-y: auto;  /* 垂直方向上，如果内容超出则显示滚动条 */
+}

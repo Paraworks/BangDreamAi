@@ -1,3 +1,12 @@
+//设置sessionID为全局变量
+let sessionId = window.sessionId;
+document.addEventListener('DOMContentLoaded', function() {
+    var live2dFrame = document.getElementById('live2d-frame');
+    var serverUrl = 'http://localhost:5000/'; // 替换为实际的服务器地址
+    live2dFrame.src = serverUrl  + window.sessionId;
+
+});
+
 //控键
 var currentVisible = 'chat-container';
 var nextVisible = {
@@ -22,7 +31,6 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
 });
 //聊天信息发送逻辑
 async function sendMessage(message) {
-    const sessionId = 'test'; 
     const modelPath = '/static/Resources/001_2018_halloween/model.json';
 
     try {
@@ -50,33 +58,46 @@ async function sendMessage(message) {
 }
 //用户配置逻辑
 document.addEventListener('DOMContentLoaded', function(){
-    fetch('/api/content/test/init/1')
+    fetch(`/api/content/${sessionId}/init/1`)
     .then(response => response.json())
     .then(data => {
         var form = document.getElementById('user-config-form');
         for (var key in data) {
-            var label = document.createElement('label');
-            label.htmlFor = key;
-            label.textContent = key + ': ';
-
-            var input = document.createElement('input');
-            input.type = 'text';
-            input.id = key;
-            input.name = key;
-            input.value = data[key];
-
-            form.appendChild(label);
-            form.appendChild(input);
-            form.appendChild(document.createElement('br'));
+            if (typeof data[key] === 'object' && data[key] !== null) {
+                // 处理嵌套对象
+                for (var nestedKey in data[key]) {
+                    createInputField(form, `${key}.${nestedKey}`, data[key][nestedKey]);
+                }
+            } else {
+                // 非嵌套对象的处理
+                createInputField(form, key, data[key]);
+            }
         }
 
-        // Add a submit button to the form
+        // 添加提交按钮
         var submitButton = document.createElement('button');
         submitButton.type = 'submit';
         submitButton.textContent = 'Confirm Changes';
         form.appendChild(submitButton);
     });
 });
+
+function createInputField(form, name, value) {
+    var label = document.createElement('label');
+    label.htmlFor = name;
+    label.textContent = name + ': ';
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.id = name;
+    input.name = name;
+    input.value = value;
+
+    form.appendChild(label);
+    form.appendChild(input);
+    form.appendChild(document.createElement('br'));
+}
+
 //用户配置信息发送逻辑
 document.getElementById('user-config-form').addEventListener('submit', function(event){
     event.preventDefault();
@@ -84,10 +105,20 @@ document.getElementById('user-config-form').addEventListener('submit', function(
     var formElements = this.elements;
     for (var i = 0; i < formElements.length; i++) {
         if (formElements[i].name) {
-            formData[formElements[i].name] = formElements[i].value;
+            var keys = formElements[i].name.split('.');
+            if (keys.length > 1) {
+                // 处理嵌套对象
+                if (!formData[keys[0]]) {
+                    formData[keys[0]] = {};
+                }
+                formData[keys[0]][keys[1]] = formElements[i].value;
+            } else {
+                // 非嵌套对象
+                formData[formElements[i].name] = formElements[i].value;
+            }
         }
     }
-    fetch('/api/content/test/init/1', {  // Update this URL to your actual endpoint
+    fetch(`/api/content/${sessionId}/init/1`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -100,9 +131,11 @@ document.getElementById('user-config-form').addEventListener('submit', function(
     })
     .catch(error => console.error('Error:', error));
 });
+
+
 //文章编辑逻辑
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/editor/test/init')  // 替换为获取文章数据的实际 URL
+    fetch(`/api/editor/${sessionId}/init`)  // 替换为获取文章数据的实际 URL
     .then(response => response.json())
     .then(data => {
         var form = document.getElementById('article-editor-form');
@@ -184,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
 var currentTaskData = {}; // 全局变量存储当前任务数据
 
 function loadArticleData() {
-    fetch('/api/editor/test/init')  // 替换为获取文章数据的实际 URL
+    fetch(`/api/editor/${sessionId}/init`)  // 替换为获取文章数据的实际 URL
     .then(response => response.json())
     .then(data => {
         var form = document.getElementById('article-editor-form');
@@ -212,7 +245,7 @@ function loadArticleData() {
 function addSentence(sentenceId) {
     var nextSentenceNumber = parseInt(sentenceId.match(/\d+$/)[0]) + 1;
 
-    fetch(`/api/create/test/init/${nextSentenceNumber}`, { method: 'GET' })
+    fetch(`/api/create/${sessionId}/init/${nextSentenceNumber}`, { method: 'GET' })
     .then(response => response.json())
     .then(data => {
         if (data.contents) {
@@ -256,7 +289,7 @@ document.getElementById('article-editor-form').addEventListener('submit', functi
         }
     }
 
-    fetch('/api/editor/test/init', {  // 替换为保存文章数据的实际 URL
+    fetch(`/api/editor/${sessionId}/init`, {  // 替换为保存文章数据的实际 URL
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

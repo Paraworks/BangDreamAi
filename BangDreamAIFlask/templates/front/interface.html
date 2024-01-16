@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{url_for('static',filename='assets/style.css')}}">
 </head>
 <body>
-<iframe class="live2d-frame" id="live2d-frame" src="http://localhost:5000/test" allow="autoplay"></iframe>
+    <iframe class="live2d-frame" id="live2d-frame" src="" allow="autoplay"></iframe>
 <!-- Button to Toggle Components -->
 <button id="btn-toggle">Toggle View</button>
 
@@ -34,7 +34,9 @@
         <!-- Article content fields will be added here by JavaScript -->
     </form>
 </div>
-
+<script>
+    window.sessionId = "{{ session_id }}";
+</script>
 <!-- External JavaScript -->
 <script src="{{url_for('static',filename='components/script.js')}}"></script>
 </body>

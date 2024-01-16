@@ -19,7 +19,12 @@ class Content(db.Model):
     background = db.Column(db.String(120), nullable=True)
     speaker = db.Column(db.String(50), nullable=True)
     band = db.Column(db.String(50), nullable=True)
-    position = db.Column(db.String(50), nullable=True)
+    positionX = db.Column(db.Integer, nullable=True)
+    positionY = db.Column(db.Integer, nullable=True)
+    stopBreath = db.Column(db.Integer, nullable=True)
+    mouseTrack = db.Column(db.Integer, nullable=True)
+    scale = db.Column(db.Float, nullable=True)
+
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)

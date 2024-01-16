@@ -37,5 +37,8 @@
     <script type="module" src="{{url_for('static',filename='components/live2d.js')}}"></script>
     <script src="{{url_for('static',filename='library/live2d.min.js')}}"></script>
     <script src="{{url_for('static',filename='library/live2dcubismcore.min.js')}}"></script>
+    <script>
+        window.sessionId = "{{ session_id }}";
+    </script>
 </body>
 </html>

@@ -2,4 +2,4 @@ from flask import Blueprint
 
 # 生成蓝图
 views = Blueprint('views', __name__)
-from . import index, session, live2d
+from . import index, live2d
