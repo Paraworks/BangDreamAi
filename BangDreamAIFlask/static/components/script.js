@@ -176,31 +176,63 @@ function createInputField(container, name, value) {
     container.appendChild(document.createElement('br'));
 }
 
-function addSentence(sentenceId) {
-    // 获取当前句子编号的最后一个数字，并计算下一个句子的编号
-    var nextSentenceNumber = parseInt(sentenceId.match(/\d+$/)[0]) + 1;
-    var nextSentenceId = 'sentence_' + nextSentenceNumber;
-    fetch(`/api/create/test/init/${nextSentenceNumber}`, { method: 'GET' }) // 替换为创建新句子的实际 URL
+document.addEventListener('DOMContentLoaded', function() {
+    loadArticleData();
+});
+
+// 在 loadArticleData 函数的末尾添加保存按钮
+var currentTaskData = {}; // 全局变量存储当前任务数据
+
+function loadArticleData() {
+    fetch('/api/editor/test/init')  // 替换为获取文章数据的实际 URL
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // 在界面上添加新句子的块
-            var form = document.getElementById('article-editor-form');
-            createSentenceBlock(form, nextSentenceId, {}); // 假设新句子初始为空对象
+        var form = document.getElementById('article-editor-form');
+        form.innerHTML = '';  // 清空表单以加载新数据
+
+        currentTaskData = data.task; // 存储当前任务数据
+
+        // 显示任务数据
+        displayTaskData(form, data.task);
+
+        // 为每个句子创建一个块
+        for (var sentenceId in data.contents) {
+            createSentenceBlock(form, sentenceId, data.contents[sentenceId]);
+        }
+
+        // 添加保存按钮
+        var saveButton = document.createElement('button');
+        saveButton.type = 'submit';
+        saveButton.textContent = '保存更改';
+        form.appendChild(saveButton);
+    });
+}
+
+// 增加句子并重新加载数据
+function addSentence(sentenceId) {
+    var nextSentenceNumber = parseInt(sentenceId.match(/\d+$/)[0]) + 1;
+
+    fetch(`/api/create/test/init/${nextSentenceNumber}`, { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.contents) {
+            currentTaskData.contents = data.contents;  // 更新任务数据
+            loadArticleData();  // 重新加载文章数据
         } else {
             alert('创建新句子失败');
         }
     })
     .catch(error => console.error('Error:', error));
-    }
+}
 
-    document.getElementById('article-editor-form').addEventListener('submit', function(event) {
+document.getElementById('article-editor-form').addEventListener('submit', function(event) {
     event.preventDefault();
     var formData = {
-    task: {}, // 假设 task 数据不在这里处理
-    contents: {}
+        task: currentTaskData,
+        contents: {}
     };
     var formElements = this.elements;
+
     for (var i = 0; i < formElements.length; i++) {
         if (formElements[i].name) {
             var keys = formElements[i].name.split('-');
@@ -211,7 +243,16 @@ function addSentence(sentenceId) {
                 formData.contents[sentenceId] = {};
             }
 
-            formData.contents[sentenceId][property] = formElements[i].value;
+            var value = formElements[i].value;
+            // 尝试转换数字和布尔值
+            if (!isNaN(value) && value.trim() !== '') {
+                value = Number(value);
+            } else if (value.toLowerCase() === 'true') {
+                value = true;
+            } else if (value.toLowerCase() === 'false') {
+                value = false;
+            }
+            formData.contents[sentenceId][property] = value;
         }
     }
 

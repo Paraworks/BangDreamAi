@@ -15,7 +15,7 @@ class Content(db.Model):
     text = db.Column(db.JSON, nullable=True)
     frequence = db.Column(db.Float, nullable=True)
     volum = db.Column(db.Integer, nullable=True)
-    upper = db.Column(db.Integer, nullable=True)
+    duration = db.Column(db.Float, nullable=True)
     background = db.Column(db.String(120), nullable=True)
     speaker = db.Column(db.String(50), nullable=True)
     band = db.Column(db.String(50), nullable=True)

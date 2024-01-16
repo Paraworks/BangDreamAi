@@ -8,15 +8,23 @@ def editor(session_id,task_id):
     db = app.config['db']
     if request.method == 'POST':
         updateboard = request.json
+        print(updateboard)
         updated_task = updateboard['task']
         if db.find(Task, {"sessionID": session_id, "taskID": task_id}):
             db.update(Task, {"sessionID": session_id, "taskID": task_id}, updated_task)
         else:
             db.insert(Task, updated_task)
-        for sentence in updateboard['contents']:
-            updated_content = updateboard['contents'][sentence]
+        for sentence_name in updateboard['contents']:
+            updated_content = updateboard['contents'][sentence_name]
             if db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']}):
+                print('---------------------------------')
+                updated_content['text'] = {'expression': updated_content['expression'], 'motion': updated_content['motion'], 'response': updated_content['response']}
+                del updated_content['expression'], updated_content['motion'], updated_content['response']
+                print(updated_content)
                 db.update(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']}, updated_content)
+                test = db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']})
+                print(test)
+                print('---------------------------------')
             else:
                 db.insert(Content, updated_content)
         return jsonify({"success": True})
@@ -43,10 +51,12 @@ def create(session_id,task_id,sentence_id):
         #删除id key
         del updated_content['id']
         db.insert(Content, updated_content)
-        return jsonify({"success": True})
+        task = db.find(Task, {"sessionID": session_id, "taskID": task_id})
+        return task
     db.insert(Task, {"sessionID": session_id, "taskID": task_id, "contents": {"sentence_1": 1}})
     updated_content = db.find(Content, {"sessionID": session_id, "taskID": "init", "sentenceId": 1})
     updated_content['taskID'] = task_id
     del updated_content['id']
     db.insert(Content, updated_content)
-    return jsonify({"success": True})
+    task = db.find(Task, {"sessionID": session_id, "taskID": task_id})
+    return task
