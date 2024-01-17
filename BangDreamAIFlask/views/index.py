@@ -12,6 +12,7 @@ def index():
     db = app.config['db']
     session_id = str(uuid.uuid4())
     latest_session_id = session_id
+    session_id = 'test'
     content = Config('content.json').read()
     task = Config('task.json').read()
     user = Config('user.json').read()

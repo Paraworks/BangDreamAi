@@ -1,3 +1,6 @@
 Flask
+Flask-Cors
+Flask-SQLAlchemy
+Jinja2
 requests
-flask_cors
+SQLAlchemy

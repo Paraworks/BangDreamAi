@@ -24,6 +24,8 @@ class Content(db.Model):
     stopBreath = db.Column(db.Integer, nullable=True)
     mouseTrack = db.Column(db.Integer, nullable=True)
     scale = db.Column(db.Float, nullable=True)
+    isPlay = db.Column(db.Integer, nullable=True)
+    playerID = db.Column(db.Integer, nullable=True)
 
 
 class Task(db.Model):

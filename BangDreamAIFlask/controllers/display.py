@@ -11,8 +11,8 @@ def display(session_id,task_id):
     for sentence in task['contents']:
         content = db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": task['contents'][sentence] })
         del content['id'], content['sessionID'], content['taskID'], content['sentenceId']
+        #if content['isPlay'] == 1:
         db.update(Content, {"sessionID": session_id, "taskID": "init", "sentenceId": 1 }, content)
         stop = content['duration']
-        #暂停十秒
         time.sleep(stop)
     return jsonify({"success": True})
