@@ -159,6 +159,48 @@ document.getElementById('preview-article-btn').addEventListener('click', functio
     previewArticle(sessionId, taskId);
 });
 
+function loadArticle(sessionId, taskId) {
+    fetch(`/api/editor/${sessionId}/${taskId}`, { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+        var form = document.getElementById('article-editor-form');
+        form.innerHTML = '';
+
+        for (var sentenceId in data.contents) {
+            createSentenceBlock(form, sentenceId, data.contents[sentenceId]);
+            loadAudioFromBackend(sentenceId, data.contents[sentenceId]);
+            loadImageFromBackend(sentenceId, data.contents[sentenceId]);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function loadAudioFromBackend(sentenceId, sentenceData) {
+    var audioUrl = `${sentenceData.audiobaseUrl}${sessionId}/${sentenceData.audioname}`;
+    var audioPreview = document.getElementById(`${sentenceId}-audio-preview`);
+    if (audioPreview) {
+        fetch(audioUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            audioPreview.src = URL.createObjectURL(blob);
+        })
+        .catch(error => console.error('Error loading audio:', error));
+    }
+}
+
+function loadImageFromBackend(sentenceId, sentenceData) {
+    var imageUrl = `${sentenceData.audiobaseUrl}${sessionId}/${sentenceData.background}`;
+    var imagePreview = document.getElementById(`${sentenceId}-background-preview`);
+    if (imagePreview) {
+        fetch(imageUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            imagePreview.src = URL.createObjectURL(blob);
+        })
+        .catch(error => console.error('Error loading image:', error));
+    }
+}
+
 // 预览文章函数
 function previewArticle(sessionId, taskId) {
     var formData = collectFormData();
@@ -183,31 +225,144 @@ function createSentenceBlock(form, sentenceId, sentenceData) {
     sentenceDiv.className = 'sentence-block';
     sentenceDiv.id = sentenceId;
 
-    // 创建输入字段
+    // 主要字段：text.response, speaker, band, playerID, modelPath, 音频预览
+    createMainFields(sentenceDiv, sentenceId, sentenceData);
+
+    // 其他字段的可展开区域
+    var expandableDiv = document.createElement('div');
+    expandableDiv.className = 'expandable';
+    expandableDiv.style.display = 'none'; // 默认隐藏
+
+    // 创建折叠字段
     for (var key in sentenceData) {
-        if (typeof sentenceData[key] === 'object' && sentenceData[key] !== null) {
-            // 处理嵌套对象
-            for (var nestedKey in sentenceData[key]) {
-                createInputField(sentenceDiv, `${sentenceId}-${key}-${nestedKey}`, sentenceData[key][nestedKey]);
+        if (key !== 'text' && key !== 'speaker' && key !== 'band' && key !== 'playerID' && key !== 'modelPath') {
+            if (typeof sentenceData[key] === 'object' && sentenceData[key] !== null) {
+                for (var nestedKey in sentenceData[key]) {
+                    createInputField(expandableDiv, `${sentenceId}-${key}-${nestedKey}`, sentenceData[key][nestedKey]);
+                }
+            } else {
+                createInputField(expandableDiv, `${sentenceId}-${key}`, sentenceData[key]);
             }
-        } else {
-            // 非嵌套对象的处理
-            createInputField(sentenceDiv, `${sentenceId}-${key}`, sentenceData[key]);
         }
     }
 
-    // 删除句子按钮
-    var deleteButton = document.createElement('button');
-    deleteButton.textContent = '删除句子';
-    deleteButton.addEventListener('click', function() {
-        sentenceDiv.remove();
-    });
-    sentenceDiv.appendChild(deleteButton);
+    // 切换按钮
+    var toggleButton = document.createElement('button');
+    toggleButton.textContent = '显示/隐藏更多设置';
+    toggleButton.onclick = function() {
+        event.preventDefault();
+        expandableDiv.style.display = expandableDiv.style.display === 'none' ? 'block' : 'none';
+    };
 
+    sentenceDiv.appendChild(toggleButton);
+    sentenceDiv.appendChild(expandableDiv);
     form.appendChild(sentenceDiv);
 }
 
-function createInputField(container, name, value) {
+function createMainFields(container, sentenceId, sentenceData) {
+    // 创建主要字段
+    createInputField(container, `${sentenceId}-text-response`, sentenceData.text.response, true);
+    createInputField(container, `${sentenceId}-text-motion`, sentenceData.text.motion, true);
+    createInputField(container, `${sentenceId}-text-expression`, sentenceData.text.expression, true);
+    createInputField(container, `${sentenceId}-speaker`, sentenceData.speaker);
+    createInputField(container, `${sentenceId}-band`, sentenceData.band);
+    createInputField(container, `${sentenceId}-playerID`, sentenceData.playerID);
+    createInputField(container, `${sentenceId}-modelPath`, sentenceData.modelPath);
+
+    addImageUploadAndPreview(container, sentenceId, sentenceData.background);
+
+    // 添加音频上传标签和输入
+    var audioLabel = document.createElement('label');
+    audioLabel.textContent = '上传音频: ';
+    container.appendChild(audioLabel);
+
+    var audioInput = document.createElement('input');
+    audioInput.type = 'file';
+    audioInput.accept = 'audio/*';
+    audioInput.id = `${sentenceId}-audio-input`;
+    audioInput.addEventListener('change', function(event) {
+        handleAudioUpload(event, sentenceId);
+    });
+    container.appendChild(audioInput);
+
+    // 添加 TTS 音频获取按钮
+    var fetchAudioButton = document.createElement('button');
+    fetchAudioButton.textContent = '获取 TTS 音频';
+    fetchAudioButton.addEventListener('click', function() {
+        fetchTTSAudio(sentenceId);
+    });
+    container.appendChild(fetchAudioButton);
+
+    // 添加音频预览元素
+    var audioPreview = document.createElement('audio');
+    audioPreview.controls = true;
+    audioPreview.id = `${sentenceId}-audio-preview`;
+    container.appendChild(audioPreview);
+}
+
+function addImageUploadAndPreview(container, sentenceId, imageName) {
+    var imageLabel = document.createElement('label');
+    imageLabel.textContent = '上传背景图片: ';
+    container.appendChild(imageLabel);
+
+    var imageInput = document.createElement('input');
+    imageInput.type = 'file';
+    imageInput.accept = 'image/*';
+    imageInput.id = `${sentenceId}-background-input`;
+    imageInput.addEventListener('change', function(event) {
+        handleImageUpload(event, sentenceId);
+    });
+    container.appendChild(imageInput);
+
+    var imagePreview = document.createElement('img');
+    imagePreview.id = `${sentenceId}-background-preview`;
+    imagePreview.className = "image-preview";
+    container.appendChild(imagePreview);
+
+    // 尝试加载现有的背景图片
+    if (imageName) {
+        loadImageFromBackend(sentenceId, imageName);
+    }
+}
+
+
+function handleAudioUpload(event, sentenceId) {
+    var file = event.target.files[0];
+    if (file) {
+        var audioPreview = document.getElementById(`${sentenceId}-audio-preview`);
+        audioPreview.src = URL.createObjectURL(file);
+    }
+}
+
+function handleImageUpload(event, sentenceId) {
+    var file = event.target.files[0];
+    if (file) {
+        var imagePreview = document.getElementById(`${sentenceId}-background-preview`);
+        imagePreview.src = URL.createObjectURL(file);
+    }
+}
+
+
+function fetchTTSAudio(sentenceId, sentenceData) {
+    event.preventDefault();
+    var responseInput = document.getElementById(`${sentenceId}-text-response`);
+    var text = responseInput ? responseInput.value : '';
+    var ttsApiBaseUrl = document.getElementById(`${sentenceId}-ttsApiBaseUrl`).value;
+    var speaker = document.getElementById(`${sentenceId}-speaker`).value;
+    var ttsUrl = `${ttsApiBaseUrl}&speaker=${speaker}&text=${encodeURIComponent(text)}`;
+
+    fetch(ttsUrl)
+    .then(response => response.blob())
+    .then(blob => {
+        var audioPreview = document.getElementById(`${sentenceId}-audio-preview`);
+        audioPreview.src = URL.createObjectURL(blob);
+    })
+    .catch(error => console.error('Error fetching TTS audio:', error));
+}
+
+
+
+function createInputField(container, name, value, isLarge = false) {
     var label = document.createElement('label');
     label.htmlFor = name;
     label.textContent = name.replace(/-/g, ' ') + ': ';
@@ -218,11 +373,14 @@ function createInputField(container, name, value) {
     input.name = name;
     input.value = value;
 
+    if (isLarge) {
+        input.style.width = '100%'; // 让文本输入框更宽
+    }
+
     container.appendChild(label);
     container.appendChild(input);
     container.appendChild(document.createElement('br'));
 }
-
 
 function addSentence() {
     var form = document.getElementById('article-editor-form');
@@ -232,7 +390,7 @@ function addSentence() {
     // 如果是第一个句子，使用默认配置，否则复制上一个句子的配置
     var lastSentenceData = sentenceCount > 0 ? collectSentenceData(form.children[sentenceCount - 1]) : getDefaultSentenceData();
     lastSentenceData.sentenceId = sentenceCount + 1;  // 更新句子编号
-    lastSentenceData.audioname = `user1_story_1_${lastSentenceData.sentenceId}.wav`;  // 更新音频文件名
+    lastSentenceData.audioname = `${document.getElementById('task-id-input').value}_${lastSentenceData.sentenceId}.wav`;  // 更新音频文件名
 
     createSentenceBlock(form, newSentenceId, lastSentenceData);
 }
@@ -243,7 +401,7 @@ function getDefaultSentenceData() {
         taskID: document.getElementById('task-id-input').value,
         sentenceId: 1,
         playerID: 1,
-        modelPath: "../static/Resources/002_2018_dog/model.json",
+        modelPath: null,
         ttsApiBaseUrl: "http://127.0.0.1:8000/?is_chat=false",
         textApiBaseUrl: "http://127.0.0.1:5000/api/sentence/test",
         audiobaseUrl: "/api/file/",
@@ -287,10 +445,10 @@ function collectSentenceData(sentenceDiv) {
     return data;
 }
 
-
 function saveArticle(sessionId, taskId) {
     var formData = collectFormData();
 
+    // 保存文章内容
     fetch(`/api/editor/${sessionId}/${taskId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -301,11 +459,78 @@ function saveArticle(sessionId, taskId) {
         if (data.success) {
             alert('文章已保存！');
         } else {
-            alert('保存失败！');
+            alert('保存文章失败！');
         }
     })
     .catch(error => console.error('Error:', error));
+
+    // 上传音频文件
+    var sentenceBlocks = document.getElementsByClassName('sentence-block');
+    for (var i = 0; i < sentenceBlocks.length; i++) {
+        var sentenceDiv = sentenceBlocks[i];
+        var sentenceId = sentenceDiv.id;
+
+        // 上传音频文件
+        var audioPreview = document.getElementById(`${sentenceId}-audio-preview`);
+        var audioName = formData.contents[sentenceId].audioname;
+        if (audioPreview && audioPreview.src) {
+            uploadAudioFile(sessionId, audioName, audioPreview.src);
+        }
+
+        // 上传背景图片
+        var imageInput = document.getElementById(`${sentenceId}-background-input`);
+        if (imageInput && imageInput.files.length > 0) {
+            var imageName = formData.contents[sentenceId].background; // 使用表单中的背景文件名
+            uploadImageFile(sessionId, imageName, imageInput.files[0]);
+        }
+    }
 }
+
+function uploadImageFile(sessionId, imageName, file) {
+    var formData = new FormData();
+    formData.append('file', file, imageName);
+
+    fetch(`/api/upload/${sessionId}`, {
+        method: 'POST',
+        headers: { 'uploadfile': imageName },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Image file uploaded successfully');
+        } else {
+            console.log('Failed to upload image file');
+        }
+    })
+    .catch(error => console.error('Error uploading image file:', error));
+}
+
+
+function uploadAudioFile(sessionId, audioName, audioSrc) {
+    fetch(audioSrc)
+    .then(response => response.blob())
+    .then(blob => {
+        var formData = new FormData();
+        formData.append('file', blob, audioName);
+
+        fetch(`/api/upload/${sessionId}`, {
+            method: 'POST',
+            headers: { 'uploadfile': audioName },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Audio file uploaded successfully');
+            } else {
+                console.log('Failed to upload audio file');
+            }
+        })
+        .catch(error => console.error('Error uploading audio file:', error));
+    });
+}
+
 
 function collectFormData() {
     var form = document.getElementById('article-editor-form');

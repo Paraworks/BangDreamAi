@@ -15,10 +15,11 @@ def index():
     content = Config('content.json').read()
     task = Config('task.json').read()
     user = Config('user.json').read()
-    content['sessionID'] = session_id
-    task['sessionID'] = session_id
-    user['sessionID'] = session_id
-    db.insert(Content, content)
-    db.insert(Task, task)
-    db.insert(User, user)
+    if not db.find(Task, {'sessionID': session_id,"taskID": 'init'}):
+        content['sessionID'] = session_id
+        task['sessionID'] = session_id
+        user['sessionID'] = session_id
+        db.insert(Content, content)
+        db.insert(Task, task)
+        db.insert(User, user)
     return render_template('front/interface.html', session_id=session_id)
