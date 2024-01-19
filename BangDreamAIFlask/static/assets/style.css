@@ -15,7 +15,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     position: fixed;
-    bottom: 0;
+    bottom: 1;
     right: 0;
     display: none; /* Initially hidden */
 }

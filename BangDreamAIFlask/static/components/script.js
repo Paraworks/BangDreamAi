@@ -134,31 +134,48 @@ document.getElementById('user-config-form').addEventListener('submit', function(
 
 
 //文章编辑逻辑
-document.addEventListener('DOMContentLoaded', function() {
-    fetch(`/api/editor/${sessionId}/init`)  // 替换为获取文章数据的实际 URL
-    .then(response => response.json())
-    .then(data => {
-        var form = document.getElementById('article-editor-form');
+// 初始化 sessionID 输入字段
+document.getElementById('session-id-input').value = sessionId;
 
-        // 显示 task 的内容
-        displayTaskData(form, data.task);
-
-        // 为每个句子创建一个块
-        for (var sentenceId in data.contents) {
-            createSentenceBlock(form, sentenceId, data.contents[sentenceId]);
-        }
-    });
+// 加载文章按钮事件
+document.getElementById('load-article-btn').addEventListener('click', function() {
+    loadArticle(sessionId, document.getElementById('task-id-input').value);
 });
 
-function displayTaskData(form, taskData) {
-    var taskDiv = document.createElement('div');
-    taskDiv.className = 'task-data';
-    for (var key in taskData) {
-        var p = document.createElement('p');
-        p.textContent = key + ': ' + taskData[key];
-        taskDiv.appendChild(p);
-    }
-    form.appendChild(taskDiv);
+document.getElementById('add-sentence-btn').addEventListener('click', function() {
+    addSentence();
+});
+
+document.getElementById('save-article-btn').addEventListener('click', function() {
+    var sessionId = document.getElementById('session-id-input').value;
+    var taskId = document.getElementById('task-id-input').value;
+    saveArticle(sessionId, taskId);
+});
+
+// 预览文章按钮事件
+document.getElementById('preview-article-btn').addEventListener('click', function() {
+    var sessionId = document.getElementById('session-id-input').value;
+    var taskId = document.getElementById('task-id-input').value;
+    previewArticle(sessionId, taskId);
+});
+
+// 预览文章函数
+function previewArticle(sessionId, taskId) {
+    var formData = collectFormData();
+    fetch(`/api/display/${sessionId}/${taskId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('文章预览成功！');
+        } else {
+            alert('文章预览失败！');
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function createSentenceBlock(form, sentenceId, sentenceData) {
@@ -166,29 +183,26 @@ function createSentenceBlock(form, sentenceId, sentenceData) {
     sentenceDiv.className = 'sentence-block';
     sentenceDiv.id = sentenceId;
 
-    // 句子名称
-    var sentenceName = document.createElement('h3');
-    sentenceName.textContent = sentenceId;
-    sentenceDiv.appendChild(sentenceName);
-
     // 创建输入字段
     for (var key in sentenceData) {
         if (typeof sentenceData[key] === 'object' && sentenceData[key] !== null) {
+            // 处理嵌套对象
             for (var nestedKey in sentenceData[key]) {
-                createInputField(sentenceDiv, `${sentenceId}-${nestedKey}`, sentenceData[key][nestedKey]);
+                createInputField(sentenceDiv, `${sentenceId}-${key}-${nestedKey}`, sentenceData[key][nestedKey]);
             }
         } else {
+            // 非嵌套对象的处理
             createInputField(sentenceDiv, `${sentenceId}-${key}`, sentenceData[key]);
         }
     }
 
-    // 增加句子按钮
-    var addButton = document.createElement('button');
-    addButton.textContent = '增加句子';
-    addButton.addEventListener('click', function() {
-        addSentence(sentenceId);
+    // 删除句子按钮
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = '删除句子';
+    deleteButton.addEventListener('click', function() {
+        sentenceDiv.remove();
     });
-    sentenceDiv.appendChild(addButton);
+    sentenceDiv.appendChild(deleteButton);
 
     form.appendChild(sentenceDiv);
 }
@@ -196,7 +210,7 @@ function createSentenceBlock(form, sentenceId, sentenceData) {
 function createInputField(container, name, value) {
     var label = document.createElement('label');
     label.htmlFor = name;
-    label.textContent = name + ': ';
+    label.textContent = name.replace(/-/g, ' ') + ': ';
 
     var input = document.createElement('input');
     input.type = 'text';
@@ -209,96 +223,125 @@ function createInputField(container, name, value) {
     container.appendChild(document.createElement('br'));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadArticleData();
-});
 
-// 在 loadArticleData 函数的末尾添加保存按钮
-var currentTaskData = {}; // 全局变量存储当前任务数据
+function addSentence() {
+    var form = document.getElementById('article-editor-form');
+    var sentenceCount = form.getElementsByClassName('sentence-block').length;
+    var newSentenceId = 'sentence_' + (sentenceCount + 1);
 
-function loadArticleData() {
-    fetch(`/api/editor/${sessionId}/init`)  // 替换为获取文章数据的实际 URL
-    .then(response => response.json())
-    .then(data => {
-        var form = document.getElementById('article-editor-form');
-        form.innerHTML = '';  // 清空表单以加载新数据
+    // 如果是第一个句子，使用默认配置，否则复制上一个句子的配置
+    var lastSentenceData = sentenceCount > 0 ? collectSentenceData(form.children[sentenceCount - 1]) : getDefaultSentenceData();
+    lastSentenceData.sentenceId = sentenceCount + 1;  // 更新句子编号
+    lastSentenceData.audioname = `user1_story_1_${lastSentenceData.sentenceId}.wav`;  // 更新音频文件名
 
-        currentTaskData = data.task; // 存储当前任务数据
-
-        // 显示任务数据
-        displayTaskData(form, data.task);
-
-        // 为每个句子创建一个块
-        for (var sentenceId in data.contents) {
-            createSentenceBlock(form, sentenceId, data.contents[sentenceId]);
-        }
-
-        // 添加保存按钮
-        var saveButton = document.createElement('button');
-        saveButton.type = 'submit';
-        saveButton.textContent = '保存更改';
-        form.appendChild(saveButton);
-    });
+    createSentenceBlock(form, newSentenceId, lastSentenceData);
 }
 
-// 增加句子并重新加载数据
-function addSentence(sentenceId) {
-    var nextSentenceNumber = parseInt(sentenceId.match(/\d+$/)[0]) + 1;
-
-    fetch(`/api/create/${sessionId}/init/${nextSentenceNumber}`, { method: 'GET' })
-    .then(response => response.json())
-    .then(data => {
-        if (data.contents) {
-            currentTaskData.contents = data.contents;  // 更新任务数据
-            loadArticleData();  // 重新加载文章数据
-        } else {
-            alert('创建新句子失败');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-document.getElementById('article-editor-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var formData = {
-        task: currentTaskData,
-        contents: {}
+function getDefaultSentenceData() {
+    return {
+        sessionID: document.getElementById('session-id-input').value,
+        taskID: document.getElementById('task-id-input').value,
+        sentenceId: 1,
+        playerID: 1,
+        modelPath: "../static/Resources/002_2018_dog/model.json",
+        ttsApiBaseUrl: "http://127.0.0.1:8000/?is_chat=false",
+        textApiBaseUrl: "http://127.0.0.1:5000/api/sentence/test",
+        audiobaseUrl: "/api/file/",
+        audioname: "user1_story_1_1.wav",
+        text: {
+            expression: null,
+            motion: null,
+            response: "第一句话"
+        },
+        frequence: 0.5,
+        volum: 70,
+        duration: 2,
+        background: "114.png",
+        speaker: "香澄",
+        band: "PoppinParty",
+        positionX: 300,
+        positionY: 50,
+        stopBreath: 0,
+        mouseTrack: 1,
+        scale: 0.3
     };
-    var formElements = this.elements;
+}
 
-    for (var i = 0; i < formElements.length; i++) {
-        if (formElements[i].name) {
-            var keys = formElements[i].name.split('-');
-            var sentenceId = keys[0];
-            var property = keys[1];
-
-            if (!formData.contents[sentenceId]) {
-                formData.contents[sentenceId] = {};
+function collectSentenceData(sentenceDiv) {
+    var data = {};
+    var inputs = sentenceDiv.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+        var keys = input.name.split('-');
+        if (keys.length === 3) {
+            var key = keys[1];
+            var nestedKey = keys[2];
+            if (!data[key]) {
+                data[key] = {};
             }
-
-            var value = formElements[i].value;
-            // 尝试转换数字和布尔值
-            if (!isNaN(value) && value.trim() !== '') {
-                value = Number(value);
-            } else if (value.toLowerCase() === 'true') {
-                value = true;
-            } else if (value.toLowerCase() === 'false') {
-                value = false;
-            }
-            formData.contents[sentenceId][property] = value;
+            data[key][nestedKey] = input.value;
+        } else if (keys.length === 2) {
+            data[keys[1]] = input.value;
         }
     }
+    return data;
+}
 
-    fetch(`/api/editor/${sessionId}/init`, {  // 替换为保存文章数据的实际 URL
+
+function saveArticle(sessionId, taskId) {
+    var formData = collectFormData();
+
+    fetch(`/api/editor/${sessionId}/${taskId}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
     })
     .then(response => response.json())
     .then(data => {
-        alert('文章已更新！');
+        if (data.success) {
+            alert('文章已保存！');
+        } else {
+            alert('保存失败！');
+        }
     })
     .catch(error => console.error('Error:', error));
-});
+}
+
+function collectFormData() {
+    var form = document.getElementById('article-editor-form');
+    var formData = {
+        sessionID: document.getElementById('session-id-input').value,
+        taskID: document.getElementById('task-id-input').value,
+        contents: {}
+    };
+
+    var sentenceBlocks = form.getElementsByClassName('sentence-block');
+    for (var i = 0; i < sentenceBlocks.length; i++) {
+        var sentenceDiv = sentenceBlocks[i];
+        var sentenceId = sentenceDiv.id;
+        formData.contents[sentenceId] = {};
+
+        var inputs = sentenceDiv.getElementsByTagName('input');
+        for (var j = 0; j < inputs.length; j++) {
+            var input = inputs[j];
+            var keys = input.name.split('-'); // 分解name属性，格式为 "sentenceId-key" 或 "sentenceId-key-nestedKey"
+            
+            if (keys.length === 3) {
+                // 嵌套对象的处理
+                var key = keys[1];
+                var nestedKey = keys[2];
+                if (!formData.contents[sentenceId][key]) {
+                    formData.contents[sentenceId][key] = {};
+                }
+                formData.contents[sentenceId][key][nestedKey] = input.value;
+            } else if (keys.length === 2) {
+                // 非嵌套对象的处理
+                formData.contents[sentenceId][keys[1]] = input.value;
+            }
+        }
+    }
+
+    return formData;
+}
+
+
