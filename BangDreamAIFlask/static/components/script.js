@@ -6,6 +6,18 @@ document.addEventListener('DOMContentLoaded', function() {
     live2dFrame.src = serverUrl  + window.sessionId;
 
 });
+// 全局变量存储 bandList 数据
+let bandList = {};
+
+// 在文档加载时获取 bandList 数据
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/listModels')
+    .then(response => response.json())
+    .then(data => {
+        bandList = data;
+        // 初始化文章编辑器等其他逻辑
+    });
+});
 
 //控键
 var currentVisible = 'chat-container';
@@ -227,7 +239,7 @@ function createSentenceBlock(form, sentenceId, sentenceData) {
 
     // 主要字段：text.response, speaker, band, playerID, modelPath, 音频预览
     createMainFields(sentenceDiv, sentenceId, sentenceData);
-
+    //addDropdownsAndUpdateButton(sentenceDiv, sentenceId, sentenceData);
     // 其他字段的可展开区域
     var expandableDiv = document.createElement('div');
     expandableDiv.className = 'expandable';
@@ -259,6 +271,207 @@ function createSentenceBlock(form, sentenceId, sentenceData) {
     form.appendChild(sentenceDiv);
 }
 
+function addDropdownsAndUpdateButton(container, sentenceId, sentenceData) {
+    // 创建下拉框
+    var bandSelect = createDropdown(`${sentenceId}-band`, Object.keys(bandList));
+    var speakerSelect = createDropdown(`${sentenceId}-speaker`, []);
+    var modelSelect = createDropdown(`${sentenceId}-modelPath`, []);
+    var motionSelect = createDropdown(`${sentenceId}-motion`, []);
+    var expressionSelect = createDropdown(`${sentenceId}-expression`, []);
+
+    // 更新按钮
+    var updateButton = document.createElement('button');
+    updateButton.textContent = '切换';
+    updateButton.addEventListener('click', function() {
+        event.preventDefault();
+        updateSentenceData(sentenceId, {
+            band: bandSelect.value,
+            speaker: speakerSelect.value,
+            modelPath: modelSelect.value,
+            motion: motionSelect.value,
+            expression: expressionSelect.value
+        });
+    });
+
+    // 添加下拉框和按钮到容器
+    container.appendChild(bandSelect);
+    container.appendChild(speakerSelect);
+    container.appendChild(modelSelect);
+    container.appendChild(motionSelect);
+    container.appendChild(expressionSelect);
+    container.appendChild(updateButton);
+
+    // 绑定事件以更新 speaker 和 modelPath 下拉框
+    bandSelect.addEventListener('change', function() {
+        updateSpeakerAndModelOptions(bandSelect.value, speakerSelect, modelSelect);
+    });
+}
+
+function createDropdown(id, options) {
+    var select = document.createElement('select');
+    select.id = id;
+    options.forEach(option => {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.textContent = option;
+        select.appendChild(opt);
+    });
+    return select;
+}
+
+function updateSentenceData(sentenceId, data) {
+    // 更新句子数据逻辑
+    var sentenceDiv = document.getElementById(sentenceId);
+    if (sentenceDiv) {
+        // 更新输入字段值
+        sentenceDiv.querySelector(`#${sentenceId}-band`).value = data.band;
+        sentenceDiv.querySelector(`#${sentenceId}-speaker`).value = data.speaker;
+        sentenceDiv.querySelector(`#${sentenceId}-modelPath`).value = data.modelPath;
+        sentenceDiv.querySelector(`#${sentenceId}-motion`).value = data.motion;
+        sentenceDiv.querySelector(`#${sentenceId}-expression`).value = data.expression;
+    }
+}
+
+function updateSpeakerAndModelOptions(selectedBand, speakerSelect, modelSelect) {
+    // 清空并更新 speakerSelect
+    speakerSelect.innerHTML = '';
+    Object.keys(bandList[selectedBand] || {}).forEach(speaker => {
+        var opt = document.createElement('option');
+        opt.value = speaker;
+        opt.textContent = speaker;
+        speakerSelect.appendChild(opt);
+    });
+
+    // 更新 modelSelect
+    var firstSpeaker = Object.keys(bandList[selectedBand] || {})[0];
+    updateModelOptions(selectedBand, firstSpeaker, modelSelect); // 修正：传递 selectedBand
+}
+
+function updateModelOptions(selectedBand, selectedSpeaker, modelSelect) {
+    // 清空并更新 modelSelect
+    modelSelect.innerHTML = '';
+    var models = bandList[selectedBand][selectedSpeaker].models || [];
+    models.forEach(model => {
+        var opt = document.createElement('option');
+        opt.value = model;
+        opt.textContent = model;
+        modelSelect.appendChild(opt);
+    });
+}
+
+function initializeDropdowns(container, sentenceId, sentenceData) {
+    // 创建下拉框和按钮
+    var bandSelect = document.createElement('select');
+    var speakerSelect = document.createElement('select');
+    var modelSelect = document.createElement('select');
+    var motionSelect = document.createElement('select');
+    var expressionSelect = document.createElement('select');
+    var updateButton = document.createElement('button');
+    
+    // 设置下拉框和按钮的 ID
+    bandSelect.id = `${sentenceId}-band-select`;
+    speakerSelect.id = `${sentenceId}-speaker-select`;
+    modelSelect.id = `${sentenceId}-model-select`;
+    motionSelect.id = `${sentenceId}-motion-select`;
+    expressionSelect.id = `${sentenceId}-expression-select`;
+    updateButton.id = `${sentenceId}-update-button`;
+
+    // 填充乐队下拉框
+    Object.keys(bandList).forEach(band => {
+        var opt = document.createElement('option');
+        opt.value = band;
+        opt.textContent = band;
+        bandSelect.appendChild(opt);
+    });
+
+    // 添加事件监听器
+    bandSelect.addEventListener('change', function() {
+        var selectedBand = bandSelect.value;
+        updateSpeakerAndModelOptions(selectedBand, speakerSelect, modelSelect);
+    });
+
+    speakerSelect.addEventListener('change', function() {
+        var selectedBand = bandSelect.value;
+        var selectedSpeaker = speakerSelect.value;
+        updateModelOptions(selectedBand, selectedSpeaker, modelSelect);
+    });
+
+    modelSelect.addEventListener('change', function() {
+        var modelPath = modelSelect.value;
+        fetchModelDataAndUpdateDropdowns(modelPath, motionSelect, expressionSelect);
+    });
+
+    updateButton.textContent = '更新';
+    updateButton.addEventListener('click', function() {
+        event.preventDefault();
+        updateSentenceData(sentenceId, {
+            band: bandSelect.value,
+            speaker: speakerSelect.value,
+            modelPath: modelSelect.value,
+            motion: motionSelect.value,
+            expression: expressionSelect.value
+        });
+    });
+
+    // 将下拉框和按钮添加到容器中
+    container.appendChild(bandSelect);
+    container.appendChild(speakerSelect);
+    container.appendChild(modelSelect);
+    container.appendChild(motionSelect);
+    container.appendChild(expressionSelect);
+    container.appendChild(updateButton);
+
+    // 初始化 speaker 和 model 下拉框
+    var initialBand = bandSelect.value;
+    updateSpeakerAndModelOptions(initialBand, speakerSelect, modelSelect);
+
+    // 初始化 motion 和 expression 下拉框（如果 modelPath 已存在）
+    if (sentenceData.modelPath) {
+        fetchModelDataAndUpdateDropdowns(sentenceData.modelPath, motionSelect, expressionSelect);
+    }
+
+}
+
+function fetchModelDataAndUpdateDropdowns(modelPath, motionSelect, expressionSelect) {
+    // 删除 '../' 以适应服务器路径
+    var serverModelPath = modelPath.replace('..', '');
+
+    fetch(serverModelPath)
+    .then(response => response.json())
+    .then(modelData => {
+        // 更新 motions 下拉框
+        motionSelect.innerHTML = '';
+        Object.keys(modelData.motions || {}).forEach(motion => {
+            var opt = document.createElement('option');
+            opt.value = motion;
+            opt.textContent = motion;
+            motionSelect.appendChild(opt);
+        });
+
+        // 更新 expressions 下拉框
+        expressionSelect.innerHTML = '';
+        (modelData.expressions || []).forEach(expression => {
+            var opt = document.createElement('option');
+            opt.value = expression.name;
+            opt.textContent = expression.name;
+            expressionSelect.appendChild(opt);
+        });
+    })
+    .catch(error => console.error('Error fetching model data:', error));
+}
+
+function updateSentenceData(sentenceId, data) {
+    // 更新句子数据逻辑
+    var sentenceDiv = document.getElementById(sentenceId);
+    if (sentenceDiv) {
+        sentenceDiv.querySelector(`#${sentenceId}-band`).value = data.band;
+        sentenceDiv.querySelector(`#${sentenceId}-speaker`).value = data.speaker;
+        sentenceDiv.querySelector(`#${sentenceId}-modelPath`).value = data.modelPath;
+        sentenceDiv.querySelector(`#${sentenceId}-text-motion`).value = data.motion;
+        sentenceDiv.querySelector(`#${sentenceId}-text-expression`).value = data.expression;
+    }
+}
+
 function createMainFields(container, sentenceId, sentenceData) {
     // 创建主要字段
     createInputField(container, `${sentenceId}-text-response`, sentenceData.text.response, true);
@@ -270,6 +483,9 @@ function createMainFields(container, sentenceId, sentenceData) {
     createInputField(container, `${sentenceId}-modelPath`, sentenceData.modelPath);
 
     addImageUploadAndPreview(container, sentenceId, sentenceData.background);
+
+    // 初始化下拉框
+    initializeDropdowns(container, sentenceId,sentenceData);
 
     // 添加音频上传标签和输入
     var audioLabel = document.createElement('label');
@@ -568,5 +784,4 @@ function collectFormData() {
 
     return formData;
 }
-
 
