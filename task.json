@@ -2,6 +2,6 @@
     "sessionID": "test",
     "taskID": "init",
     "contents": {
-      "sentence_1": 1
+      "sentence_1": null
     }
   }

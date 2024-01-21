@@ -15,9 +15,10 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     position: fixed;
-    bottom: 0;
+    bottom: 1;
     right: 0;
     display: none; /* Initially hidden */
+    width: calc(33% - 40px); /* 宽度为屏幕的三分之一减去边距 */
 }
 
 /* Class to show the components */
@@ -50,6 +51,8 @@ body {
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 5px;
+    display: flex; /* 设置为弹性盒子 */
+    flex-direction: column; /* 子元素纵向排列 */
 }
 
 /* 每个句子块的标题样式 */
@@ -94,4 +97,10 @@ button:hover {
 .container {
     max-height: 500px; /* 限制最大高度 */
     overflow-y: auto;  /* 垂直方向上，如果内容超出则显示滚动条 */
+}
+
+/* 图片预览框样式 */
+.image-preview {
+    max-width: 200px; /* 调整为所需的最大宽度 */
+    max-height: 200px; /* 调整为所需的最大高度 */
 }

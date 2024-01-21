@@ -28,11 +28,21 @@
         :root {
             font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
         }
+        /* 按钮样式 */
+        startButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div id="app"></div>
-    <button id="startButton">启动</button>
+    <button id="startButton">载入live2d</button>
     <canvas id="canvas_view"></canvas>
     <script type="module" src="{{url_for('static',filename='components/live2d.js')}}"></script>
     <script src="{{url_for('static',filename='library/live2d.min.js')}}"></script>

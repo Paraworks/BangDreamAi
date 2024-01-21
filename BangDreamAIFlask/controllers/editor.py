@@ -3,40 +3,22 @@ from flask import current_app as app
 from . import controllers
 from BangDreamAIFlask.models.database import Content, Task
 
-@controllers.route('/editor/<session_id>/<task_id>', methods=['GET', 'POST'])
+@controllers.route('/editor/<session_id>/<task_id>', methods=['POST','GET'])
 def editor(session_id,task_id):
     db = app.config['db']
     if request.method == 'POST':
         updateboard = request.json
-        print(updateboard)
-        updated_task = updateboard['task']
         if db.find(Task, {"sessionID": session_id, "taskID": task_id}):
-            db.update(Task, {"sessionID": session_id, "taskID": task_id}, updated_task)
+            db.update(Task, {"sessionID": session_id, "taskID": task_id}, updateboard)
         else:
-            db.insert(Task, updated_task)
-        for sentence_name in updateboard['contents']:
-            updated_content = updateboard['contents'][sentence_name]
-            if db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']}):
-                print('---------------------------------')
-                updated_content['text'] = {'expression': updated_content['expression'], 'motion': updated_content['motion'], 'response': updated_content['response']}
-                del updated_content['expression'], updated_content['motion'], updated_content['response']
-                print(updated_content)
-                db.update(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']}, updated_content)
-                test = db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": updated_content['sentenceId']})
-                print(test)
-                print('---------------------------------')
-            else:
-                db.insert(Content, updated_content)
+            db.insert(Task, updateboard)
         return jsonify({"success": True})
-    task = db.find(Task, {"sessionID": session_id, "taskID": task_id})
-    editboard = {}
-    editboard['task'] = task
-    editboard['contents'] = {}
-    for sentence in task['contents']:
-        sentence_name = "sentence_"+str(task['contents'][sentence])
-        editboard['contents'][sentence_name] = db.find(Content, {"sessionID": session_id, "taskID": task_id, "sentenceId": task['contents'][sentence] })
-    return editboard
+    if db.find(Task, {"sessionID": session_id, "taskID": task_id}):
+        task = db.find(Task, {"sessionID": session_id, "taskID": task_id})
+        return task
+    return jsonify({"success": False})
 
+'''
 @controllers.route('/create/<session_id>/<task_id>/<sentence_id>', methods=['GET'])
 def create(session_id,task_id,sentence_id):
     db = app.config['db']
@@ -60,3 +42,4 @@ def create(session_id,task_id,sentence_id):
     db.insert(Content, updated_content)
     task = db.find(Task, {"sessionID": session_id, "taskID": task_id})
     return task
+'''

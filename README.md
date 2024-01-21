@@ -9,7 +9,7 @@ python app.py
 BangDream的live2d可以直接从bestdori手动下载。Github上也有许多提取好的仓库
 ### [五团(卡面比较多)](https://github.com/seia-soto/BanG-Dream-Live2D)
 ### [七团](https://github.com/Eikanya/Live2d-model/tree/master/BanG%20Dream!)
-### 你需要将这些模型放在[BangDreamAIFlask/static/Resources](https://github.com/Paraworks/BangDreamAi/tree/mainBangDreamAIFlask/static/Resources)下
+### 你需要将这些模型放在[BangDreamAIFlask/static/Resources](https://github.com/Paraworks/BangDreamAi/tree/main/BangDreamAIFlask/static/Resources)下
 ## 启动TTS合成
 [TTS(Bang dream Bert vits示例)](https://nijigaku.top/2023/10/03/BangDreamTTS/):
 ```
@@ -22,7 +22,7 @@ pip install Flask-CORS
 python server.py
 ```
 ## 自定义chatbot
-自行修改[chat.py](https://github.com/Paraworks/BangDreamAi/BangDreamAIFlask/utils/chat.py)的相关配置以及逻辑(如果需要)
+自行修改[chat.py](https://github.com/Paraworks/BangDreamAi/blob/main/BangDreamAIFlask/utils/chat.py)的相关配置以及逻辑(如果需要)
 ## To do list
 视觉小说模式(已完成大部分)
 b站直播间AI直播

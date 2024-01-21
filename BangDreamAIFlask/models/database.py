@@ -12,6 +12,8 @@ class Content(db.Model):
     modelPath = db.Column(db.String(120), nullable=True)
     ttsApiBaseUrl = db.Column(db.String(120), nullable=True)
     textApiBaseUrl = db.Column(db.String(120), nullable=True)
+    audiobaseUrl = db.Column(db.String(120), nullable=True)
+    audioname = db.Column(db.String(120), nullable=True)
     text = db.Column(db.JSON, nullable=True)
     frequence = db.Column(db.Float, nullable=True)
     volum = db.Column(db.Integer, nullable=True)
@@ -24,6 +26,8 @@ class Content(db.Model):
     stopBreath = db.Column(db.Integer, nullable=True)
     mouseTrack = db.Column(db.Integer, nullable=True)
     scale = db.Column(db.Float, nullable=True)
+    isPlay = db.Column(db.Integer, nullable=True)
+    playerID = db.Column(db.Integer, nullable=True)
 
 
 class Task(db.Model):
