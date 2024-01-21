@@ -215,21 +215,8 @@ function loadImageFromBackend(sentenceId, sentenceData) {
 
 // 预览文章函数
 function previewArticle(sessionId, taskId) {
-    var formData = collectFormData();
-    fetch(`/api/display/${sessionId}/${taskId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('文章预览成功！');
-        } else {
-            alert('文章预览失败！');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    // 直接跳转到指定页面
+    window.location.href = `/${sessionId}/${taskId}`;
 }
 
 function createSentenceBlock(form, sentenceId, sentenceData) {
