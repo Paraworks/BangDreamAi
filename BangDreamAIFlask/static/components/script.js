@@ -588,7 +588,7 @@ function createInputField(container, name, value, isLarge = false) {
 function addSentence() {
     var form = document.getElementById('article-editor-form');
     var sentenceCount = form.getElementsByClassName('sentence-block').length;
-    var newSentenceId = 'sentence_' + (sentenceCount + 1);
+    var newSentenceId = 'sentence_' + (sentenceCount + 1).toString().padStart(7, '0');
 
     // 如果是第一个句子，使用默认配置，否则复制上一个句子的配置
     var lastSentenceData = sentenceCount > 0 ? collectSentenceData(form.children[sentenceCount - 1]) : getDefaultSentenceData();
@@ -608,7 +608,7 @@ function getDefaultSentenceData() {
         ttsApiBaseUrl: "http://127.0.0.1:8000/?is_chat=false",
         textApiBaseUrl: "http://127.0.0.1:5000/api/sentence/test",
         audiobaseUrl: "/api/file/",
-        audioname: "user1_story_1_1.wav",
+        audioname: `${document.getElementById('task-id-input').value}_${1..toString().padStart(7, '0')}.wav`,
         text: {
             expression: null,
             motion: null,
@@ -645,6 +645,10 @@ function collectSentenceData(sentenceDiv) {
             data[keys[1]] = input.value;
         }
     }
+    // 更新 audioname
+    var sentenceId = sentenceDiv.id.split('_')[1];
+    data.audioname = `${document.getElementById('task-id-input').value}_${sentenceId}.wav`;
+
     return data;
 }
 
