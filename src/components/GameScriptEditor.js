@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography, Box, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
@@ -55,7 +56,7 @@ function GameScriptEditor() {
                 if (Object.keys(contents).length > 0) {
                     const firstSentenceId = Object.keys(contents)[0];
                     setSelectedSentenceId(firstSentenceId);
-                    setSentenceData(contents[firstSentenceId]);
+                    setSentenceData(contents[firstSentenceId]); // 加载句子的原有数据
                     setSelectedBand(contents[firstSentenceId].band || '');
                     setSelectedMember(contents[firstSentenceId].speaker || '');  
                     setSelectedModel(contents[firstSentenceId].modelPath || '');
@@ -127,8 +128,25 @@ function GameScriptEditor() {
                     [childKey]: value
                 }
             });
+            setScript({
+                ...script,
+                [selectedSentenceId]: {
+                    ...sentenceData,
+                    [parentKey]: {
+                        ...sentenceData[parentKey],
+                        [childKey]: value
+                    }
+                },
+            });
         } else {
             setSentenceData({ ...sentenceData, [name]: value });
+            setScript({
+                ...script,
+                [selectedSentenceId]: {
+                    ...sentenceData,
+                    [name]: value,
+                },
+            });
         }
     };
 
@@ -209,11 +227,66 @@ function GameScriptEditor() {
         })
         .then(response => {
             console.log('File uploaded successfully');
+            // 更新音频URL
+            updateAudioUrl();
         })
         .catch(error => {
             console.error('Error uploading file:', error);
         });
     };
+    const getAudioFromTTS = () => {
+        const ttsApiBaseUrl = sentenceData.ttsApiBaseUrl;
+        const speaker = sentenceData.speaker;
+        const text = sentenceData.text.response;
+        
+        axios.get(`${ttsApiBaseUrl}&speaker=${encodeURIComponent(speaker)}&text=${encodeURIComponent(text)}`, {
+            responseType: 'blob'
+        })
+        .then(response => {
+            const audioBlob = new Blob([response.data], { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('file', audioBlob, sentenceData.audioname);
+            
+            // 将音频上传到后端
+            axios.post(`http://127.0.0.1:5000/api/upload/${sessionId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'uploadfile': sentenceData.audioname
+                }
+            })
+            .then(response => {
+                console.log('TTS audio uploaded successfully');
+                // 更新音频URL
+                updateAudioUrl();
+            })
+            .catch(error => {
+                console.error('Error uploading TTS audio:', error);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching audio from TTS:', error);
+        });
+    };
+
+    const updateAudioUrl = () => {
+        // 获取最新的音频URL
+        axios.get(`http://127.0.0.1:5000/api/file/${sessionId}/${sentenceData.audioname}`, {
+            responseType: 'blob'
+        })
+        .then(response => {
+            const audioBlob = new Blob([response.data], { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            setSentenceData({
+                ...sentenceData,
+                audioUrl: audioUrl
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching audio URL:', error);
+        });
+    };
+
+
 
     const handleBackgroundUpload = (event) => {
         const file = event.target.files[0];
@@ -268,25 +341,20 @@ function GameScriptEditor() {
                                     label="Sentence"
                                     onChange={(e) => {
                                         const newSelectedSentenceId = e.target.value;
-                                        const newSelectedSentence = script[newSelectedSentenceId];
-                                    
-                                        if (newSelectedSentence && newSelectedSentence.text) {
-                                            setSelectedSentenceId(newSelectedSentenceId);
-                                            setSentenceData(newSelectedSentence || '');
-                                            setSelectedBand(newSelectedSentence.band || '');
-                                            setSelectedMember(newSelectedSentence.speaker || '');
-                                            setSelectedModel(newSelectedSentence.modelPath || '');
-                                            setSelectedMotion(newSelectedSentence.text.motion || '');
-                                            setSelectedExpression(newSelectedSentence.text.expression || '');
-                                        } else {
-                                            console.error('Selected sentence data is incomplete: ', newSelectedSentence);
-                                        }
+                                        setSelectedSentenceId(newSelectedSentenceId);
+                                        setSentenceData(script[newSelectedSentenceId]); // 加载句子的原有数据
+                                        setSelectedBand(script[newSelectedSentenceId].band || '');
+                                        setSelectedMember(script[newSelectedSentenceId].speaker || '');
+                                        setSelectedModel(script[newSelectedSentenceId].modelPath || '');
+                                        setSelectedMotion(script[newSelectedSentenceId].text?.motion || '');
+                                        setSelectedExpression(script[newSelectedSentenceId].text?.expression || '');
                                     }}
                                 >
                                     {Object.keys(script).map((id) => (
                                         <MenuItem key={id} value={id}>{id}</MenuItem>
                                     ))}
                                 </Select>
+
                             </FormControl>
                         </Grid>
                         <Grid item xs={4}>
@@ -451,19 +519,25 @@ function GameScriptEditor() {
     />
 </Grid>
 <Grid item xs={12}>
-    <input
-        accept="audio/*"
-        style={{ display: 'none' }}
-        id="audio-upload"
-        type="file"
-        onChange={handleAudioUpload}
-    />
-    <label htmlFor="audio-upload">
-        <Button variant="contained" component="span">
-            Upload Audio
-        </Button>
-    </label>
-</Grid>
+                <input
+                    accept="audio/*"
+                    style={{ display: 'none' }}
+                    id="audio-upload"
+                    type="file"
+                    onChange={handleAudioUpload}
+                />
+                <label htmlFor="audio-upload">
+                    <Button variant="contained" component="span">
+                        Upload Audio
+                    </Button>
+                </label>
+                <Button variant="contained" onClick={getAudioFromTTS} style={{ marginLeft: '10px' }}>
+                    Get Audio from TTS
+                </Button>
+                {sentenceData.audioUrl && (
+                    <audio controls src={sentenceData.audioUrl} style={{ marginTop: '10px' }} />
+                )}
+            </Grid>
 <Grid item xs={12}>
     <input
         accept="image/*"
@@ -519,3 +593,4 @@ function GameScriptEditor() {
 }
 
 export default GameScriptEditor;
+
