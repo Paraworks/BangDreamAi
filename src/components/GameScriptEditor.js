@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography, Box, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-function GameScriptEditor() {
+function GameScriptEditor(props) {
+    const { setInfoMessages } = props;
     const [sessionId, setSessionId] = useState('');
     const [taskId, setTaskId] = useState('');
     const [script, setScript] = useState({});
@@ -162,8 +163,8 @@ function GameScriptEditor() {
         };
     
         axios.post(`http://127.0.0.1:5000/api/editor/${sessionId}/${taskId}`, scriptData)
-            .then(() => alert('Script saved successfully'))
-            .catch(error => console.error('Error saving script:', error));
+            .then(() => setInfoMessages(prevMessages => [...prevMessages, 'Script saved successfully']))
+            .catch(error => setInfoMessages(prevMessages => [...prevMessages, 'Error saving script: ' + error.message]));
     };
 
     const addSentence = () => {
