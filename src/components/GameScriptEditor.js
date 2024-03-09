@@ -5,8 +5,8 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typograph
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function GameScriptEditor(props) {
-    const { setInfoMessages } = props;
-    const [sessionId, setSessionId] = useState('');
+    const { setInfoMessages, sessionId } = props;
+    const [setSessionId] = useState('');
     const [taskId, setTaskId] = useState('');
     const [script, setScript] = useState({});
     const [selectedSentenceId, setSelectedSentenceId] = useState(null);
@@ -22,7 +22,7 @@ function GameScriptEditor(props) {
     const [selectedExpression, setSelectedExpression] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/listModels')
+        axios.get('/api/listModels')
             .then(response => setBands(response.data))
             .catch(error => console.error('Error fetching models:', error));
     }, []);
@@ -30,7 +30,7 @@ function GameScriptEditor(props) {
     useEffect(() => {
         if (selectedBand && selectedMember && bands[selectedBand] && bands[selectedBand][selectedMember]) {
             const memberModels = bands[selectedBand][selectedMember].models || [];
-            const updatedModels = memberModels.map(model => model.replace('..', 'http://localhost:5000'));
+            const updatedModels = memberModels.map(model => model.replace('..', ''));
             setModels(updatedModels);
         } else {
             setModels([]);
@@ -50,7 +50,7 @@ function GameScriptEditor(props) {
     }, [selectedModel]);
 
     const loadScript = () => {
-        axios.get(`http://127.0.0.1:5000/api/editor/${sessionId}/${taskId}`)
+        axios.get(`/api/editor/${sessionId}/${taskId}`)
             .then(response => {
                 const contents = response.data.contents || {};
                 setScript(contents);
@@ -162,7 +162,7 @@ function GameScriptEditor(props) {
             contents: updatedScript
         };
     
-        axios.post(`http://127.0.0.1:5000/api/editor/${sessionId}/${taskId}`, scriptData)
+        axios.post(`/api/editor/${sessionId}/${taskId}`, scriptData)
             .then(() => setInfoMessages(prevMessages => [...prevMessages, 'Script saved successfully']))
             .catch(error => setInfoMessages(prevMessages => [...prevMessages, 'Error saving script: ' + error.message]));
     };
@@ -220,7 +220,7 @@ function GameScriptEditor(props) {
         const file = event.target.files[0];
         const formData = new FormData();
         formData.append('file', file);
-        axios.post(`http://127.0.0.1:5000/api/upload/${sessionId}`, formData, {
+        axios.post(`/api/upload/${sessionId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'uploadfile': sentenceData.audioname
@@ -249,7 +249,7 @@ function GameScriptEditor(props) {
             formData.append('file', audioBlob, sentenceData.audioname);
             
             // 将音频上传到后端
-            axios.post(`http://127.0.0.1:5000/api/upload/${sessionId}`, formData, {
+            axios.post(`/api/upload/${sessionId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'uploadfile': sentenceData.audioname
@@ -271,7 +271,7 @@ function GameScriptEditor(props) {
 
     const updateAudioUrl = () => {
         // 获取最新的音频URL
-        axios.get(`http://127.0.0.1:5000/api/file/${sessionId}/${sentenceData.audioname}`, {
+        axios.get(`/api/file/${sessionId}/${sentenceData.audioname}`, {
             responseType: 'blob'
         })
         .then(response => {
@@ -293,7 +293,7 @@ function GameScriptEditor(props) {
         const file = event.target.files[0];
         const formData = new FormData();
         formData.append('file', file);
-        axios.post(`http://127.0.0.1:5000/upload/${sessionId}`, formData, {
+        axios.post(`/upload/${sessionId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'uploadfile': sentenceData.background

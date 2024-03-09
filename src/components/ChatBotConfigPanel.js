@@ -4,7 +4,7 @@ import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box, Typo
 import GameScriptEditor from './GameScriptEditor';
 
 function ChatBotComponent() {
-    const sessionId = 'test'; // 假设为测试,实际中应从外部获取
+    const sessionId = window.sessionId; // 假设为测试,实际中应从外部获取
     const taskID = 'init'; // 根据实际情况调整  
     const sentenceId = 1; // 根据实际情况调整
 
@@ -33,11 +33,11 @@ function ChatBotComponent() {
     // 初始化加载
     useEffect(() => {
         // 加载乐队列表
-        axios.get('http://localhost:5000/api/listModels')
+        axios.get('/api/listModels')
             .then(response => {
                 setBands(response.data);
                 // 预先加载已存在的配置
-                axios.get(`http://localhost:5000/api/content/${sessionId}/${taskID}/${sentenceId}`)
+                axios.get(`/api/content/${sessionId}/${taskID}/${sentenceId}`)
                     .then(res => {
                         const initialConfig = res.data || {};
                         setConfig(initialConfig);
@@ -46,7 +46,7 @@ function ChatBotComponent() {
                         setSelectedModel(initialConfig.modelPath || '');
                         // 在加载乐队信息后设置模型路径
                         if (initialConfig.band && initialConfig.speaker && response.data[initialConfig.band] && response.data[initialConfig.band][initialConfig.speaker]) {
-                            const modelPaths = response.data[initialConfig.band][initialConfig.speaker].models.map(m => m.replace('..', 'http://localhost:5000/static/Resources'));
+                            const modelPaths = response.data[initialConfig.band][initialConfig.speaker].models.map(m => m.replace('..', ''));
                             setModels(modelPaths);
                         }
                     })
@@ -70,14 +70,14 @@ function ChatBotComponent() {
                 setSelectedModel(''); // 重置模型选择
                 // 更新模型列表
                 const memberModels = selectedBandMembers[firstMember] ? selectedBandMembers[firstMember].models : [];
-                const modelPaths = memberModels.map(m => m.replace('..', 'http://localhost:5000'));
+                const modelPaths = memberModels.map(m => m.replace('..', ''));
                 setModels(modelPaths);
             }
         } else if (name === 'speaker') {
             setSelectedMember(value);
             // 更新模型列表
             const memberModels = bands[selectedBand] && bands[selectedBand][value] ? bands[selectedBand][value].models : [];
-            const modelPaths = memberModels.map(m => m.replace('..', 'http://localhost:5000'));
+            const modelPaths = memberModels.map(m => m.replace('..', ''));
             setModels(modelPaths);
             setSelectedModel(''); // 重置模型选择
         } else if (name === 'modelPath') {
@@ -88,7 +88,7 @@ function ChatBotComponent() {
     // 处理表单提交
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post(`http://localhost:5000/api/content/${sessionId}/${taskID}/${sentenceId}`, config)
+        axios.post(`/api/content/${sessionId}/${taskID}/${sentenceId}`, config)
             .then(response => {
                 setInfoMessages(prevMessages => [...prevMessages, 'Configuration updated!']);
             })
@@ -115,7 +115,7 @@ function ChatBotComponent() {
             const expressions = (modelData.expressions || []).map(exp => exp.name);
             const chatData = { message, modelPath: selectedModel, motions, expressions };
 
-            const response = await fetch(`http://localhost:5000/api/chat/${sessionId}`, {
+            const response = await fetch(`/api/chat/${sessionId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(chatData)
@@ -140,13 +140,13 @@ function ChatBotComponent() {
 
     return (
         <Box display="flex" width="100%" height="100vh">
-            <Box width="67%" height="100%" p={2}>
-                {/* 左侧内容 */}
+            <Box width="67%" height="100%" p={2} position="relative">
+                <canvas id="canvas_view" style={{ width: '100%', height: '100%' }}></canvas>
             </Box>
             <Box width="33%" height="100%" display="flex" flexDirection="column" p={2}>
                 <Box flex="1" overflow="auto" mb={2}>
                     {isEditorPanelOpen ? (
-                        <GameScriptEditor setInfoMessages={setInfoMessages} />
+                        <GameScriptEditor setInfoMessages={setInfoMessages} sessionId={sessionId} />
                     ) : (
                         <>
                             {!isConfigPanelOpen ? (
@@ -240,6 +240,9 @@ function ChatBotComponent() {
                     </Button>
                     <Button variant="contained" color="info" onClick={() => setIsInfoPanelOpen(!isInfoPanelOpen)} style={{ marginTop: '10px', marginLeft: '10px' }}>
                         {isInfoPanelOpen ? 'Close Info' : 'Open Info'}
+                    </Button>
+                    <Button variant="contained" color="success" id="startButton" style={{ marginTop: '10px', marginLeft: '10px' }}>
+                        载入live2d
                     </Button>
                 </Box>
                 <Collapse in={isInfoPanelOpen} style={{ marginTop: '10px' }}>

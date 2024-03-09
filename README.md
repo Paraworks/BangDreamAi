@@ -3,3 +3,7 @@
 npm install
 npm start
 ```
+编译
+```
+npm run build
+```
