@@ -1,11 +1,13 @@
 import random
 import json
-
+import requests
 def get_model_data(model_path):
     """读取模型文件并返回动作和表情列表"""
     try:
-        with open('BangDreamAIFlask/'+model_path, 'r') as file:
-            model_data = json.load(file)
+        #用request模块从model_path获取模型文件
+        model_data = requests.get(model_path)
+        if model_data.status_code == 200:
+            model_data = model_data.json()
             motions = list(model_data.get('motions', {}).keys())
             expressions = [exp['name'] for exp in model_data.get('expressions', [])]
             return motions, expressions

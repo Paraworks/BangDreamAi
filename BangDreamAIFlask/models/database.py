@@ -35,6 +35,7 @@ class Task(db.Model):
     sessionID = db.Column(db.String(80), nullable=False)
     taskID = db.Column(db.String(120), nullable=False)
     contents = db.Column(db.JSON, nullable=True)
+    #sentenceNumber = db.Column(db.Integer, nullable=True)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
