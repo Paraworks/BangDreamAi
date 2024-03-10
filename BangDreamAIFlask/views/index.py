@@ -22,4 +22,4 @@ def index():
         db.insert(Content, content)
         db.insert(Task, task)
         db.insert(User, user)
-    return render_template('front/interface.html', session_id=session_id)
+    return render_template('front/index.html', session_id=session_id)

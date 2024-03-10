@@ -22,10 +22,14 @@ pip install Flask-CORS
 python server.py
 ```
 ## 自定义chatbot
-自行修改[chat.py](https://github.com/Paraworks/BangDreamAi/blob/main/BangDreamAIFlask/utils/chat.py)的相关配置以及逻辑(如果需要)
+目前没有找到适合的api,建议自行修改[chat.py](https://github.com/Paraworks/BangDreamAi/blob/main/BangDreamAIFlask/utils/chat.py)的相关配置以及逻辑(如果需要)
 ## To do list
-视觉小说模式(已完成大部分)
-b站直播间AI直播
+视觉小说模式(已完成大部分),通过文本编辑器完成后跳转
+```
+{url}/{session_id}/{task_id}
+```
+预览
+# b站直播间AI直播(没做)
 ## OBS 配置详解：
 #### live2d 配置
 - 来源 > + > 浏览器 > 新建 > URL：填入上一步生成的live2d链接，一般是localhost:xxxx
