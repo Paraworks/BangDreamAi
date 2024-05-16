@@ -1,0 +1,106 @@
+/* Live2D 框架样式 */
+.live2d-frame {
+    border: none; /* 无边框 */
+    height: 100%; /* 高度 */
+    position: absolute; /* 绝对定位 */
+    right: 0; /* 右对齐 */
+    top: 0; /* 顶部对齐 */
+    width: 100%; /* 宽度 */
+}
+
+/* Example CSS styles */
+#chat-container, #user-config-container, #article-editor-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 1;
+    right: 0;
+    display: none; /* Initially hidden */
+    width: calc(33% - 40px); /* 宽度为屏幕的三分之一减去边距 */
+}
+
+/* Class to show the components */
+.show {
+    display: block;
+}
+
+/* Styling for the toggle button */
+button#btn-toggle {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+}
+
+/* 基础样式 */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* 任务信息样式 */
+.task-data {
+    margin-bottom: 20px;
+}
+
+/* 每个句子块的样式 */
+.sentence-block {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: flex; /* 设置为弹性盒子 */
+    flex-direction: column; /* 子元素纵向排列 */
+}
+
+/* 每个句子块的标题样式 */
+.sentence-block h3 {
+    margin-top: 0;
+}
+
+/* 输入字段的样式 */
+.sentence-block input[type='text'] {
+    width: calc(100% - 20px);
+    margin: 5px 0;
+    padding: 5px;
+}
+
+/* 按钮样式 */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* 内容区域滚动样式 */
+#article-editor-container {
+    max-height: 500px;  /* 可根据需要调整高度 */
+    overflow-y: auto;
+}
+
+/* 调整其他界面组件的样式 */
+#chat-container, #user-config-container {
+    max-height: 500px; /* 根据需要调整 */
+    overflow-y: auto;
+}
+
+.container {
+    max-height: 500px; /* 限制最大高度 */
+    overflow-y: auto;  /* 垂直方向上，如果内容超出则显示滚动条 */
+}
+
+/* 图片预览框样式 */
+.image-preview {
+    max-width: 200px; /* 调整为所需的最大宽度 */
+    max-height: 200px; /* 调整为所需的最大高度 */
+}

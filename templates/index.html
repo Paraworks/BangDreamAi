@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <!-- link rel="icon" href="/favicon.ico" /-->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <!--link rel="apple-touch-icon" href="/logo192.png" /-->
+    <link rel="manifest" href="{{ url_for('static', filename='components/manifest.json') }}" />
+    <title>Bangdream Vtuber Real</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='assets/main.css')}}">
+    <script defer="defer" src="{{url_for('static',filename='components/main.js')}}"></script>
+</head>
+<body>
+    <noscript>What can I say.</noscript>
+    <div id="root"></div>
+    <div id="app"></div>
+    <script type="module" src="{{url_for('static',filename='components/live2d.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2d.min.js')}}"></script>
+    <script src="{{url_for('static',filename='library/live2dcubismcore.min.js')}}"></script>
+    <script>
+        window.sessionId = "{{ session_id }}";
+    </script>
+</body>
+</html>

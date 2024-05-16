@@ -1,0 +1,23 @@
+{
+    "api": "chatgpt",
+    "apiKey": "",
+    "apiLink": "",
+    "band": "Afterglow",
+    "duration": 2,
+    "frequence": 0.5,
+    "modelPath": "static/Resources/Afterglow/蘭/校服/model.json",
+    "mouseTrack": "5",
+    "positionX": 300,
+    "positionY": 50,
+    "scale": "0.3",
+    "speaker": "蘭",
+    "stopBreath": 0,
+    "text": {
+        "response": "初始化成功",
+        "expression": null,
+        "motion": null
+    },
+    "textApiBaseUrl": "http://127.0.0.1:5000/api/sentence/test",
+    "ttsApiBaseUrl": "http://127.0.0.1:8000/?is_chat=false",
+    "volum": 70
+}
